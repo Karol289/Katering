@@ -1,23 +1,37 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
-
+<div class="page" style="background-color: #719237; min-height: 100vh;">
     <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+        <div class="top-row px-4 d-flex justify-content-between align-items-center" style="background-color: #628328; padding: 10px;">
+            <!-- Sekcja centralna -->
+            <div class="d-flex justify-content-center w-100" style="margin-left: 150px;">
+                <a href="/home" class="mianLayout-custom mx-3">Strona Główna</a>
+                <a href="/offer" class="mianLayout-custom mx-3">Nasza Oferta</a>
+                <a href="/faq" class="mianLayout-custom mx-3">Częste Pytania</a>
+                <a href="/about" class="mianLayout-custom mx-3">O Nas</a>
+            </div>
+
+            <!-- Sekcja po prawej -->
+            <div class="d-flex justify-content-end">
+                <a href="/login" class="btn-custom mx-3">Zaloguj się</a>
+                <a href="/register" class="btn-custom mx-3">Zarejestruj się</a>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="rectangle">
+                <!-- Wiersze siatki z wyróżnionymi literami -->
+                <p class="katering-text"><b>DAJ PONIEŚĆ SIĘ MAGII IDEALNIE PRZYRZYĄDZONYCH POSIŁKÓW<br><br></b></p>
+                <p class="diet-text">
+                    Witaj w miejscu, gdzie smak jest sztuką, a każde danie to małe dzieło magii.
+                    Tworzymy posiłki, które zachwycają jakością i różnorodnością, dostosowane do Twoich potrzeb.
+                    Zaufaj naszym kulinarnym mistrzom i odkryj nowy wymiar smaku!
+                </p>
+            </div>
         </div>
 
         <article class="content px-4">
             @Body
         </article>
     </main>
-</div>
-
-<div id="blazor-error-ui">
-    An unhandled error has occurred.
-    <a href="" class="reload">Reload</a>
-    <a class="dismiss">🗙</a>
 </div>

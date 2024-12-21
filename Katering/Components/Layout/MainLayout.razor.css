@@ -1,4 +1,4 @@
-.page {
+﻿.page {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -8,8 +8,62 @@ main {
     flex: 1;
 }
 
-.sidebar {
-    background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);
+/* dodanie efektów do zaloguj/zarejestruj*/
+.btn-custom {
+    color: #F6FCDF; /* Kolor tekstu */
+    border: 2px solid #F6FCDF; /* Obramowanie */
+    border-radius: 5px; /* Zaokr?glone rogi */
+    padding: 5px 15px; /* Wewn?trzny odst?p */
+    text-decoration: none; /* Usu? podkre?lenie */
+    font-size: 14px; /* Rozmiar tekstu */
+    transition: background-color 0.3s, color 0.3s; /* P?ynna zmiana koloru */
+}
+
+    .btn-custom:hover {
+        background-color: #c2c5aa; /* Kolor t?a po najechaniu */
+        color: #669933; /* Kolor tekstu po najechaniu */
+    }
+/* dodanie efektów do głownych ikonek, menu główne itp*/
+.mianLayout-custom {
+    color: #F6FCDF; /* Kolor tekstu */
+    padding: 5px 15px; /* Wewn?trzny odst?p */
+    text-decoration: none; /* Usu? podkre?lenie */
+    font-size: 14px; /* Rozmiar tekstu */
+    transition: background-color 0.3s, color 0.3s; /* P?ynna zmiana koloru */
+}
+/**/
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    position: relative;
+}
+
+.rectangle {
+    width: 600px; /* Szerokość prostokąta */
+    height: 800px; /* Wysokość prostokąta */
+    background-color: white; /* Kolor prostokąta */
+    border-radius: 60px; /* Zaokrąglone rogi */
+    position: absolute; /* Pozycjonowanie absolutne */
+    top: 100px; /* Odległość od górnej krawędzi strony */
+    left: 50px; /* Odległość od lewej krawędzi strony */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Delikatny cień */
+    padding: 20px; /* Wewnętrzne odstępy */
+    text-align: center; /* Wyśrodkowanie tekstu w poziomie */
+    color: #719237;
+}
+.diet-text {
+    font-size: 20s px;
+    line-height: 1.8; /* Odstępy między liniami */
+    margin: 0;
+    font-family: serif, sans-serif; /* Czcionka */
+}
+.katering-text {
+    font-size: 45px; /* Rozmiar nagłówka */
+    line-height: 1.8; /*odstepy miedzy linijkami*/
+    letter-spacing: 7px; /*odstep miedzy literami*/
+    margin: 0;
+    font-family: serif;
 }
 
 .top-row {
