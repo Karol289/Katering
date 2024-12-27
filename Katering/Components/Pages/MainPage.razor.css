@@ -1,0 +1,100 @@
+﻿/* Rysuje prostokąt po lewej stronei ekranu z zaokrąglonymi bokami*/
+.rectangle {
+    width: 600px; /* Szerokość prostokąta */
+    height: 800px; /* Wysokość prostokąta */
+    background-color: white; /* Kolor prostokąta */
+    border-radius: 60px; /* Zaokrąglone rogi */
+    position: absolute; /* Pozycjonowanie absolutne */
+    top: 100px; /* Odległość od górnej krawędzi strony */
+    left: 50px; /* Odległość od lewej krawędzi strony */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Delikatny cień */
+    padding: 20px; /* Wewnętrzne odstępy */
+    text-align: center; /* Wyśrodkowanie tekstu w poziomie */
+    color: #719237; /* Kolor zielony */
+}
+
+/* Styl tekstu */
+.diet-text {
+    font-size: 20px;
+    line-height: 1.8; /* Odstępy między liniami */
+    margin: 0;
+    font-family: serif, sans-serif; /* Czcionka */
+}
+
+.katering-text {
+    font-size: 45px; /* Rozmiar nagłówka */
+    line-height: 1.8; /*odstepy miedzy linijkami*/
+    letter-spacing: 7px; /*odstep miedzy literami*/
+    margin: 0;
+    font-family: serif;
+}
+
+.auth-links {
+    display: flex;
+    justify-content: flex-end; /* Wyrównuje elementy do prawej */
+    gap: 10px; /* Odstępy między przyciskami */
+}
+
+.logo-text {
+    color: #F6FCDF; /* Kolor tekstu logo */
+    font-size: 18px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.btn-custom {
+    color: #F6FCDF; /* Kolor tekstu */
+    border: 2px solid #F6FCDF; /* Obramowanie */
+    border-radius: 5px; /* Zaokrąglone rogi */
+    padding: 5px 15px; /* Wewnętrzny odstęp */
+    text-decoration: none; /* Usuń podkreślenie */
+    font-size: 14px; /* Rozmiar tekstu */
+    transition: background-color 0.3s, color 0.3s; /* Płynna zmiana koloru */
+}
+
+    .btn-custom:hover {
+        background-color: #c2c5aa; /* Kolor t?a po najechaniu */
+        color: #669933; /* Kolor tekstu po najechaniu */
+    }
+
+/* dodanie efektów do głownych ikonek, menu główne itp*/
+.mianLayout-custom {
+    color: #F6FCDF; /* Kolor tekstu */
+    padding: 5px 15px; /* Wewn?trzny odst?p */
+    text-decoration: none; /* Usu? podkre?lenie */
+    font-size: 14px; /* Rozmiar tekstu */
+    transition: background-color 0.3s, color 0.3s; /* P?ynna zmiana koloru */
+}
+
+.container-fluid {
+    display: flex;
+    justify-content: space-between; /* Rozdziela sekcje na lewej i prawej stronie */
+    align-items: center; /* Wyrównuje elementy w pionie */
+    width: 100%; /* Rozciąga na całą szerokość */
+}
+
+.top-row {
+    width: 100%; /* Pasek na całą szerokość strony */
+    background-color: #628328; /* Kolor tła */
+    padding: 10px 20px; /* Odstępy wewnętrzne */
+    display: flex;
+    position: sticky; /* Pozostaje na górze podczas przewijania */
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Delikatny cień */
+}
+
+    .top-row ::deep a, .top-row ::deep .btn-link {
+        white-space: nowrap;
+        margin-left: 1.5rem;
+        text-decoration: none;
+    }
+
+        .top-row ::deep a:hover, .top-row ::deep .btn-link:hover {
+            text-decoration: underline;
+        }
+
+        .top-row ::deep a:first-child {
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
