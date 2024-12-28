@@ -1,20 +1,48 @@
-/*.top-nav {
-    background-color: #ffffff;*/ /* T?o paska nawigacyjnego */
-    /*padding: 10px 0;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);*/ /* Cie? dla paska */
-    /*position: sticky;*/ /* Pasek pozostaje na górze */
-    /*top: 0;
-    z-index: 1000;*/ /* Wy?szy priorytet na warstwach */
-/*}
-
-.mainLayout-custom {
-    color: #333;*/ /* Kolor tekstu */
-    /*text-decoration: none;*/ /* Usu? podkre?lenie */
-    /*font-size: 18px;
-    font-weight: bold;
-    transition: color 0.3s ease;
+.auth-links {
+    display: flex; /* U?yj Flexboxa do uk?adania linków */
+    justify-content: center; /* Wy?rodkuj linki w poziomie */
+    align-items: center; /* Wy?rodkuj linki w pionie */
+    gap: 20px; /* Odst?py mi?dzy linkami */
+    width: 100%; /* Rozci?gnij kontener na ca?? szeroko?? */
 }
 
-    .mainLayout-custom:hover {
-        color: #719237;*/ /* Zmiana koloru po najechaniu */
-    /*}*/
+.nav-link {
+    color: #F6FCDF; /* Kolor tekstu linków */
+    text-decoration: none; /* Usu? podkre?lenie */
+    font-size: 16px; /* Rozmiar tekstu */
+    font-weight: bold; /* Pogrubienie tekstu */
+    transition: color 0.3s ease; /* P?ynna zmiana koloru */
+}
+
+    .nav-link:hover {
+        color: #c2c5aa; /* Zmiana koloru linku po najechaniu */
+    }
+
+
+.top-row {
+    width: 100%; /* Rozci?gnij pasek nawigacyjny na ca?? szeroko?? */
+    background-color: #628328; /* T?o paska nawigacyjnego */
+    padding: 10px 20px; /* Odst?py wewn?trzne */
+    display: flex; /* Flexbox dla ?atwego wyrównania */
+    justify-content: center; /* Wy?rodkowanie zawarto?ci poziomo */
+    align-items: center; /* Wy?rodkowanie zawarto?ci pionowo */
+    position: sticky; /* Przyklej pasek do górnej cz??ci strony */
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Delikatny cie? */
+}
+
+    .top-row ::deep a, .top-row ::deep .btn-link {
+        white-space: nowrap;
+        margin-left: 1.5rem;
+        text-decoration: none;
+    }
+
+        .top-row ::deep a:hover, .top-row ::deep .btn-link:hover {
+            text-decoration: underline;
+        }
+
+        .top-row ::deep a:first-child {
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }

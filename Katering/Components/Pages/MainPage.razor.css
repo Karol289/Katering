@@ -35,13 +35,6 @@
     gap: 10px; /* Odstępy między przyciskami */
 }
 
-.logo-text {
-    color: #F6FCDF; /* Kolor tekstu logo */
-    font-size: 18px;
-    font-weight: bold;
-    text-transform: uppercase;
-}
-
 .btn-custom {
     color: #F6FCDF; /* Kolor tekstu */
     border: 2px solid #F6FCDF; /* Obramowanie */
@@ -50,6 +43,8 @@
     text-decoration: none; /* Usuń podkreślenie */
     font-size: 14px; /* Rozmiar tekstu */
     transition: background-color 0.3s, color 0.3s; /* Płynna zmiana koloru */
+    text-align: right; /* Wyrównanie tekstu do prawej */
+    display: block; /* Upewnia się, że styl text-align działa */
 }
 
     .btn-custom:hover {
@@ -73,28 +68,4 @@
     width: 100%; /* Rozciąga na całą szerokość */
 }
 
-.top-row {
-    width: 100%; /* Pasek na całą szerokość strony */
-    background-color: #628328; /* Kolor tła */
-    padding: 10px 20px; /* Odstępy wewnętrzne */
-    display: flex;
-    position: sticky; /* Pozostaje na górze podczas przewijania */
-    top: 0;
-    z-index: 1000;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Delikatny cień */
-}
 
-    .top-row ::deep a, .top-row ::deep .btn-link {
-        white-space: nowrap;
-        margin-left: 1.5rem;
-        text-decoration: none;
-    }
-
-        .top-row ::deep a:hover, .top-row ::deep .btn-link:hover {
-            text-decoration: underline;
-        }
-
-        .top-row ::deep a:first-child {
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
