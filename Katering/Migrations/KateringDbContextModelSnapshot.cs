@@ -106,12 +106,17 @@ namespace Katering.Migrations
                     b.Property<int?>("MealId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("Value")
                         .HasColumnType("int");
 
                     b.HasKey("RatingID");
 
                     b.HasIndex("MealId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Ratings");
                 });
@@ -160,9 +165,14 @@ namespace Katering.Migrations
                     b.Property<int?>("Status")
                         .HasColumnType("int");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("OrderID");
 
                     b.HasIndex("PaymentId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Orders");
                 });
@@ -192,7 +202,7 @@ namespace Katering.Migrations
                     b.ToTable("Payments");
                 });
 
-            modelBuilder.Entity("Katering.Data.User.Administrator", b =>
+            modelBuilder.Entity("Katering.Data.Users.Administrator", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -210,7 +220,7 @@ namespace Katering.Migrations
                     b.ToTable("Administrators");
                 });
 
-            modelBuilder.Entity("Katering.Data.User.Client", b =>
+            modelBuilder.Entity("Katering.Data.Users.Client", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -240,7 +250,7 @@ namespace Katering.Migrations
                     b.ToTable("Clients");
                 });
 
-            modelBuilder.Entity("Katering.Data.User.Contractor", b =>
+            modelBuilder.Entity("Katering.Data.Users.Contractor", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -265,7 +275,7 @@ namespace Katering.Migrations
                     b.ToTable("Contractors");
                 });
 
-            modelBuilder.Entity("Katering.Data.User.Moderator", b =>
+            modelBuilder.Entity("Katering.Data.Users.Moderator", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -286,7 +296,7 @@ namespace Katering.Migrations
                     b.ToTable("Moderators");
                 });
 
-            modelBuilder.Entity("Katering.Data.User.User", b =>
+            modelBuilder.Entity("Katering.Data.Users.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -339,7 +349,13 @@ namespace Katering.Migrations
                         .WithMany()
                         .HasForeignKey("MealId");
 
+                    b.HasOne("Katering.Data.Users.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
                     b.Navigation("Meal");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Katering.Data.Food.Subscription", b =>
@@ -357,12 +373,18 @@ namespace Katering.Migrations
                         .WithMany()
                         .HasForeignKey("PaymentId");
 
+                    b.HasOne("Katering.Data.Users.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
                     b.Navigation("Payment");
+
+                    b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Katering.Data.User.Administrator", b =>
+            modelBuilder.Entity("Katering.Data.Users.Administrator", b =>
                 {
-                    b.HasOne("Katering.Data.User.User", "User")
+                    b.HasOne("Katering.Data.Users.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -371,9 +393,9 @@ namespace Katering.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Katering.Data.User.Client", b =>
+            modelBuilder.Entity("Katering.Data.Users.Client", b =>
                 {
-                    b.HasOne("Katering.Data.User.User", "User")
+                    b.HasOne("Katering.Data.Users.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -382,9 +404,9 @@ namespace Katering.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Katering.Data.User.Contractor", b =>
+            modelBuilder.Entity("Katering.Data.Users.Contractor", b =>
                 {
-                    b.HasOne("Katering.Data.User.User", "User")
+                    b.HasOne("Katering.Data.Users.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -393,9 +415,9 @@ namespace Katering.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Katering.Data.User.Moderator", b =>
+            modelBuilder.Entity("Katering.Data.Users.Moderator", b =>
                 {
-                    b.HasOne("Katering.Data.User.User", "User")
+                    b.HasOne("Katering.Data.Users.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.CompilerServices;
 
-namespace Katering.Data.User
+namespace Katering.Data.Users
 {
     public class Client
     {

@@ -2,6 +2,8 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
+using Katering.Data.Users;
+
 namespace Katering.Data.Order
 {
 
@@ -14,8 +16,8 @@ namespace Katering.Data.Order
         [ForeignKey("PaymentId")]
         public Payment? Payment { get; set; }
 
-        //[ForeignKey("UserID")]
-        //public int? UserID { get; set; }
+        [ForeignKey("UserId")]
+        public User? User { get; set; }
 
         public OrderStatus? Status { get; set; }
 

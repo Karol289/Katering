@@ -1,6 +1,6 @@
 ﻿using Katering.Entities;
 
-namespace Katering.Data.User
+namespace Katering.Data.Users
 {
     public class SessionState
     {

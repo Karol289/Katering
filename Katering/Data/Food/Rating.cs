@@ -3,6 +3,8 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
+using Katering.Data.Users;
+
 namespace Katering.Data.Food
 {
 
@@ -14,9 +16,9 @@ namespace Katering.Data.Food
         [ForeignKey("MealId")]
         public Meal? Meal{ get; set; }
 
-        // TODO : Klucz obcy wskazujacy na uzytkwonika ktorego jest ocena
-        //[ForeignKey("User")]
-        //public int? UserID { get; set; }
+       
+        [ForeignKey("UserId")]
+        public User? User { get; set; }
 
         public int? Value { get; set; }
         public DateTime? Date { get; set; }
