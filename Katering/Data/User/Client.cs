@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
 
-namespace Katering.Entities
+namespace Katering.Data.User
 {
     public class Client
     {

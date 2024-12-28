@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-
-namespace Katering.Entities
+namespace Katering.Data.User
 {
     public class User
     {

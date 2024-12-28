@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Katering.Data
+namespace Katering.Data.User
 {
     public class Moderator
     {
