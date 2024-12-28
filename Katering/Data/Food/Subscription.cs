@@ -10,8 +10,8 @@ namespace Katering.Data.Food
         [Key]
         public int SubscriptionID { get; set; }
 
-        [ForeignKey("DietID")]
-        public int? DietID {get; set;}
+        [ForeignKey("DietId")]
+        public Diet? Diet {get; set;}
 
         public string? Name { get; set; }
         public double? Price { get; set; }

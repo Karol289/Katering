@@ -16,16 +16,24 @@ namespace Katering.Migrations
                 name: "Orders",
                 columns: table => new
                 {
-                    OrderID = table.Column<int>(type: "int", nullable: false)
+                    OrderId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    PaymentID = table.Column<int>(type: "int", nullable: true),
+                    PaymentId = table.Column<int>(type: "int", nullable: true),
                     Status = table.Column<int>(type: "int", nullable: true),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Discount = table.Column<double>(type: "float", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Orders", x => x.OrderID);
+                    table.PrimaryKey("PK_Orders", x => x.OrderId);
+                    table.ForeignKey(
+                        name: "FK_Orders_Payments_PaymentId",
+                        column: x => x.PaymentId,
+                        principalTable: "Payments",
+                        principalColumn: "PaymentId",
+                        onDelete: ReferentialAction.SetNull,
+                        onUpdate: ReferentialAction.Cascade
+                        );
                 });
         }
 

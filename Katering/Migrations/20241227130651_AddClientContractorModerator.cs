@@ -19,11 +19,18 @@ namespace Katering.Migrations
                     City = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Street = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     HouseNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Clients", x => x.Id);
+                    table.ForeignKey(
+                       name: "FK_Clients_Users_UserId",
+                       column: x => x.UserId,
+                       principalTable: "Users",
+                       principalColumn: "Id",
+                       onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -53,11 +60,18 @@ namespace Katering.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ModeratorNumber = table.Column<int>(type: "int", nullable: false)
+                    ModeratorNumber = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Moderators", x => x.Id);
+                    table.ForeignKey(
+                       name: "FK_Moderators_Users_UserId",
+                       column: x => x.UserId,
+                       principalTable: "Users",
+                       principalColumn: "Id",
+                       onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(

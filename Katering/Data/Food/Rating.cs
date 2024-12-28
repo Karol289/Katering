@@ -11,8 +11,8 @@ namespace Katering.Data.Food
         [Key]
         public int RatingID { get; set; }
 
-        [ForeignKey("Meal")]
-        public int? MealID { get; set; }
+        [ForeignKey("MealId")]
+        public Meal? Meal{ get; set; }
 
         // TODO : Klucz obcy wskazujacy na uzytkwonika ktorego jest ocena
         //[ForeignKey("User")]

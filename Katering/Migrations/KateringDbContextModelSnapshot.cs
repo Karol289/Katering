@@ -22,19 +22,6 @@ namespace Katering.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Katering.Data.Administrator", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Administrators");
-                });
-
             modelBuilder.Entity("Katering.Data.Food.Diet", b =>
                 {
                     b.Property<int>("DietID")
@@ -53,11 +40,11 @@ namespace Katering.Migrations
 
             modelBuilder.Entity("Katering.Data.Food.Meal", b =>
                 {
-                    b.Property<int>("MealID")
+                    b.Property<int>("MealId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MealID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MealId"));
 
                     b.Property<int?>("Calories")
                         .HasColumnType("int");
@@ -65,10 +52,10 @@ namespace Katering.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("DietType")
+                    b.Property<int?>("DietId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("MealCategory")
+                    b.Property<int?>("MealCategoryId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -77,7 +64,11 @@ namespace Katering.Migrations
                     b.Property<double?>("Price")
                         .HasColumnType("float");
 
-                    b.HasKey("MealID");
+                    b.HasKey("MealId");
+
+                    b.HasIndex("DietId");
+
+                    b.HasIndex("MealCategoryId");
 
                     b.ToTable("Meals");
                 });
@@ -112,13 +103,15 @@ namespace Katering.Migrations
                     b.Property<DateTime?>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("MealID")
+                    b.Property<int?>("MealId")
                         .HasColumnType("int");
 
                     b.Property<int?>("Value")
                         .HasColumnType("int");
 
                     b.HasKey("RatingID");
+
+                    b.HasIndex("MealId");
 
                     b.ToTable("Ratings");
                 });
@@ -131,7 +124,7 @@ namespace Katering.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SubscriptionID"));
 
-                    b.Property<int?>("DietID")
+                    b.Property<int?>("DietId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -142,23 +135,9 @@ namespace Katering.Migrations
 
                     b.HasKey("SubscriptionID");
 
+                    b.HasIndex("DietId");
+
                     b.ToTable("Subscriptions");
-                });
-
-            modelBuilder.Entity("Katering.Data.Moderator", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ModeratorNumber")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Moderators");
                 });
 
             modelBuilder.Entity("Katering.Data.Order.Order", b =>
@@ -175,13 +154,15 @@ namespace Katering.Migrations
                     b.Property<double?>("Discount")
                         .HasColumnType("float");
 
-                    b.Property<int?>("PaymentID")
+                    b.Property<int?>("PaymentId")
                         .HasColumnType("int");
 
                     b.Property<int?>("Status")
                         .HasColumnType("int");
 
                     b.HasKey("OrderID");
+
+                    b.HasIndex("PaymentId");
 
                     b.ToTable("Orders");
                 });
@@ -211,7 +192,25 @@ namespace Katering.Migrations
                     b.ToTable("Payments");
                 });
 
-            modelBuilder.Entity("Katering.Entities.Client", b =>
+            modelBuilder.Entity("Katering.Data.User.Administrator", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Administrators");
+                });
+
+            modelBuilder.Entity("Katering.Data.User.Client", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -231,12 +230,17 @@ namespace Katering.Migrations
                     b.Property<string>("Street")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Clients");
                 });
 
-            modelBuilder.Entity("Katering.Entities.Contractor", b =>
+            modelBuilder.Entity("Katering.Data.User.Contractor", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -261,7 +265,28 @@ namespace Katering.Migrations
                     b.ToTable("Contractors");
                 });
 
-            modelBuilder.Entity("Katering.Entities.User", b =>
+            modelBuilder.Entity("Katering.Data.User.Moderator", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ModeratorNumber")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Moderators");
+                });
+
+            modelBuilder.Entity("Katering.Data.User.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -293,9 +318,84 @@ namespace Katering.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Katering.Entities.Contractor", b =>
+            modelBuilder.Entity("Katering.Data.Food.Meal", b =>
                 {
-                    b.HasOne("Katering.Entities.User", "User")
+                    b.HasOne("Katering.Data.Food.Diet", "DietType")
+                        .WithMany()
+                        .HasForeignKey("DietId");
+
+                    b.HasOne("Katering.Data.Food.MealCategory", "MealCategory")
+                        .WithMany()
+                        .HasForeignKey("MealCategoryId");
+
+                    b.Navigation("DietType");
+
+                    b.Navigation("MealCategory");
+                });
+
+            modelBuilder.Entity("Katering.Data.Food.Rating", b =>
+                {
+                    b.HasOne("Katering.Data.Food.Meal", "Meal")
+                        .WithMany()
+                        .HasForeignKey("MealId");
+
+                    b.Navigation("Meal");
+                });
+
+            modelBuilder.Entity("Katering.Data.Food.Subscription", b =>
+                {
+                    b.HasOne("Katering.Data.Food.Diet", "Diet")
+                        .WithMany()
+                        .HasForeignKey("DietId");
+
+                    b.Navigation("Diet");
+                });
+
+            modelBuilder.Entity("Katering.Data.Order.Order", b =>
+                {
+                    b.HasOne("Katering.Data.Order.Payment", "Payment")
+                        .WithMany()
+                        .HasForeignKey("PaymentId");
+
+                    b.Navigation("Payment");
+                });
+
+            modelBuilder.Entity("Katering.Data.User.Administrator", b =>
+                {
+                    b.HasOne("Katering.Data.User.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Katering.Data.User.Client", b =>
+                {
+                    b.HasOne("Katering.Data.User.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Katering.Data.User.Contractor", b =>
+                {
+                    b.HasOne("Katering.Data.User.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Katering.Data.User.Moderator", b =>
+                {
+                    b.HasOne("Katering.Data.User.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

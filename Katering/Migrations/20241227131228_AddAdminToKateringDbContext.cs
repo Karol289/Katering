@@ -15,11 +15,18 @@ namespace Katering.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1")
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Administrators", x => x.Id);
+                    table.ForeignKey(
+                       name: "FK_Administrators_Users_UserId",
+                       column: x => x.UserId,
+                       principalTable: "Users",
+                       principalColumn: "Id",
+                       onDelete: ReferentialAction.Cascade);
                 });
         }
 

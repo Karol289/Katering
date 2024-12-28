@@ -9,12 +9,13 @@ namespace Katering.Data.Food
     public class Meal
     {
         [Key]
-        public int MealID { get; set; }
+        public int MealId { get; set; }
 
-        [ForeignKey("Diet")]
-        public int? DietType { get; set; }
-        [ForeignKey("MealCategory")]
-        public int? MealCategory { get; set; }
+
+        [ForeignKey("DietId")]
+        public Diet? DietType { get; set; }
+        [ForeignKey("MealCategoryId")]
+        public MealCategory? MealCategory { get; set; }
 
         public string? Name { get; set; }
         public int? Calories { get; set; }

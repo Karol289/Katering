@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.CompilerServices;
 
 namespace Katering.Data.User
@@ -12,6 +13,10 @@ namespace Katering.Data.User
         public string? Street { get; set; }
         public string? HouseNumber { get; set; }
         public string? PhoneNumber { get; set; }
+
+        [ForeignKey("UserId")]
+
+        public User User { get; set; }
 
     }
 }
