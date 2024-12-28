@@ -4,6 +4,7 @@ using Katering.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Katering.Migrations
 {
     [DbContext(typeof(KateringDbContext))]
-    partial class KateringDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241228183040_AddOrders")]
+    partial class AddOrders
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -49,100 +52,6 @@ namespace Katering.Migrations
                     b.HasKey("DietID");
 
                     b.ToTable("Diets");
-                });
-
-            modelBuilder.Entity("Katering.Data.Food.Meal", b =>
-                {
-                    b.Property<int>("MealID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MealID"));
-
-                    b.Property<int?>("Calories")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("DietType")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("MealCategory")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double?>("Price")
-                        .HasColumnType("float");
-
-                    b.HasKey("MealID");
-
-                    b.ToTable("Meals");
-                });
-
-            modelBuilder.Entity("Katering.Data.Food.MealCategory", b =>
-                {
-                    b.Property<int>("MealCategoryID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MealCategoryID"));
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("MealCategoryID");
-
-                    b.ToTable("MealCategories");
-                });
-
-            modelBuilder.Entity("Katering.Data.Food.Rating", b =>
-                {
-                    b.Property<int>("RatingID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RatingID"));
-
-                    b.Property<string>("Content")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("MealID")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("Value")
-                        .HasColumnType("int");
-
-                    b.HasKey("RatingID");
-
-                    b.ToTable("Ratings");
-                });
-
-            modelBuilder.Entity("Katering.Data.Food.Subscription", b =>
-                {
-                    b.Property<int>("SubscriptionID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SubscriptionID"));
-
-                    b.Property<int?>("DietID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double?>("Price")
-                        .HasColumnType("float");
-
-                    b.HasKey("SubscriptionID");
-
-                    b.ToTable("Subscriptions");
                 });
 
             modelBuilder.Entity("Katering.Data.Moderator", b =>
@@ -184,31 +93,6 @@ namespace Katering.Migrations
                     b.HasKey("OrderID");
 
                     b.ToTable("Orders");
-                });
-
-            modelBuilder.Entity("Katering.Data.Order.Payment", b =>
-                {
-                    b.Property<int>("PaymentID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PaymentID"));
-
-                    b.Property<DateTime?>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Method")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<double>("Value")
-                        .HasColumnType("float");
-
-                    b.HasKey("PaymentID");
-
-                    b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("Katering.Entities.Client", b =>

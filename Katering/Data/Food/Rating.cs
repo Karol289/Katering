@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Katering.Data.Food
 {
 
-    class Rating
+    public class Rating
     {
         [Key]
         public int RatingID { get; set; }
