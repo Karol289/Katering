@@ -14,6 +14,7 @@ namespace Katering.Data.Food
 
         [ForeignKey("DietId")]
         public Diet? DietType { get; set; }
+
         [ForeignKey("MealCategoryId")]
         public MealCategory? MealCategory { get; set; }
 

@@ -35,6 +35,10 @@ namespace Katering.Entities
 
         public DbSet<Payment> Payments { get; set; }
 
+        public DbSet<MealOrder> MealsOrder { get; set; }
+
+        public DbSet<SubscriptionOrder> OrdersOrder { get; set; }
+
         // dodawanie kolejnych tablic !!
     }
 }
