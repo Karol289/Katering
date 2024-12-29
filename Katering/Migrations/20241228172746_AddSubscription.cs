@@ -15,20 +15,20 @@ namespace Katering.Migrations
                 name: "Subscriptions",
                 table => new
                 {
-                    SubscriptionID = table.Column<int>(type: "int", nullable: false)
+                    SubscriptionId = table.Column<int>(type: "int", nullable: false)
                     .Annotation("SqlServer:Identity", "1, 1"),
-                    DietID = table.Column<int>(type: "int", nullable: true),
-                    Name = table.Column<string>(type: "nvarchar(20)", nullable: false),
-                    Price = table.Column<double>(type: "decimal(10,2)", nullable: false)
+                    DietId = table.Column<int>(type: "int", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(20)", nullable: true),
+                    Price = table.Column<double>(type: "decimal(10,2)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey(name: "PK_Subscriptions", x => x.SubscriptionID);
+                    table.PrimaryKey(name: "PK_Subscriptions", x => x.SubscriptionId);
                     table.ForeignKey(
-                        name: "FK_Subscription_Diet",
-                        column: x => x.DietID,
+                        name: "FK_Subscription_Diet_DietId",
+                        column: x => x.DietId,
                         principalTable: "Diets",
-                        principalColumn: "DietID",
+                        principalColumn: "DietId",
                         onDelete: ReferentialAction.SetNull,
                         onUpdate: ReferentialAction.Cascade
                         );

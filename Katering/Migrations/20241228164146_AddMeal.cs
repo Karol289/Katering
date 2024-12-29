@@ -14,10 +14,10 @@ namespace Katering.Migrations
                 name: "Meals",
                 columns: table => new
                 {
-                    MealID = table.Column<int>(type: "int", nullable: false)
+                    MealId = table.Column<int>(type: "int", nullable: false)
                      .Annotation("SqlServer:Identity", "1, 1"),
-                    DietTypeID = table.Column<int>(type: "int", nullable: true),
-                    MealCategoryID = table.Column<int>(type: "int", nullable: true),
+                    DietTypeId = table.Column<int>(type: "int", nullable: true),
+                    MealCategoryId = table.Column<int>(type: "int", nullable: true),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Calories = table.Column<double>(type: "decimal(5)", nullable: true),
                     Price = table.Column<double>(type: "decimal(10,2)", nullable: true),
@@ -25,20 +25,20 @@ namespace Katering.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Meals", x => x.MealID);
+                    table.PrimaryKey("PK_Meals", x => x.MealId);
                     table.ForeignKey(
-                        name: "FK_Meals_DietTypes",
-                        column: x => x.DietTypeID,
+                        name: "FK_Meals_DietTypes_DietId",
+                        column: x => x.DietTypeId,
                         principalTable: "Diets",
-                        principalColumn: "DietID",
+                        principalColumn: "DietId",
                         onDelete: ReferentialAction.SetNull,
                         onUpdate: ReferentialAction.Cascade
                         );
                     table.ForeignKey(
-                        name: "FK_Meals_MealCategories",
-                        column: x => x.MealCategoryID,
+                        name: "FK_Meals_MealCategories_MealCategoryId",
+                        column: x => x.MealCategoryId,
                         principalTable: "MealCategories",
-                        principalColumn: "MealCategoryID",
+                        principalColumn: "MealCategoryId",
                         onDelete: ReferentialAction.SetNull,
                         onUpdate: ReferentialAction.Cascade
                         );

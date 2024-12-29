@@ -12,7 +12,6 @@ namespace Katering.Data.Food
 
         public string? Name { get; set; }
 
-        // klucz obcy do kontrahenta?
     }
 
 }

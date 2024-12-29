@@ -1,7 +1,7 @@
 ﻿using Katering.Data;
 using Katering.Data.Food;
 using Katering.Data.Order;
-using Katering.Data.User;
+using Katering.Data.Users;
 using Katering.Migrations;
 using Microsoft.EntityFrameworkCore;
 
@@ -34,6 +34,10 @@ namespace Katering.Entities
         public DbSet<Order> Orders { get; set; }
 
         public DbSet<Payment> Payments { get; set; }
+
+        public DbSet<MealOrder> MealsOrder { get; set; }
+
+        public DbSet<SubscriptionOrder> OrdersOrder { get; set; }
 
         // dodawanie kolejnych tablic !!
     }

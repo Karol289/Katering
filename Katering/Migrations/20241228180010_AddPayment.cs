@@ -14,7 +14,7 @@ namespace Katering.Migrations
                 name: "Payments",
                 table => new
                 {
-                    PaymentID = table.Column<int>(type: "int", nullable: false),
+                    PaymentId = table.Column<int>(type: "int", nullable: false),
                     Value = table.Column<double>(type: "decimal(10,2)", nullable: false),
                     Status = table.Column<int>(type:"int", nullable: false),
                     Date = table.Column<DateTime>(type: "DateTime", nullable: false),
@@ -22,7 +22,7 @@ namespace Katering.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey(name: "PK_Payments", x => x.PaymentID);
+                    table.PrimaryKey(name: "PK_Payments", x => x.PaymentId);
                 }
                 );
         }

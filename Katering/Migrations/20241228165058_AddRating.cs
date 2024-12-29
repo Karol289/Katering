@@ -15,8 +15,8 @@ namespace Katering.Migrations
                 name: "Ratings",
                 table => new
                 {
-                    RatingID = table.Column<int>(type: "int", nullable: false),
-                    MealID = table.Column<int>(type: "int", nullable: false),
+                    RatingId = table.Column<int>(type: "int", nullable: false),
+                    MealId = table.Column<int>(type: "int", nullable: false),
                     //UserID = table.Column<int>(type: "int", nullable: false),
                     Value = table.Column<int>(type: "tinyint", nullable: true),
                     Date = table.Column<DateTime>(type: "DateTime", nullable: true),
@@ -24,12 +24,12 @@ namespace Katering.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey(name: "PK_Ratings", x => x.RatingID);
+                    table.PrimaryKey(name: "PK_Ratings", x => x.RatingId);
                     table.ForeignKey(
-                        name: "FK_Ratings_Meals",
-                        column: x => x.MealID,
+                        name: "FK_Ratings_Meals_MealId",
+                        column: x => x.MealId,
                         principalTable: "Meals",
-                        principalColumn: "MealID",
+                        principalColumn: "MealId",
                         onDelete: ReferentialAction.Cascade,
                         onUpdate: ReferentialAction.Cascade
                         );

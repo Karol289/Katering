@@ -4,6 +4,7 @@ using Katering.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Katering.Migrations
 {
     [DbContext(typeof(KateringDbContext))]
-    partial class KateringDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241228195021_AddingUserForeighnKeys")]
+    partial class AddingUserForeighnKeys
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -145,29 +148,6 @@ namespace Katering.Migrations
                     b.ToTable("Subscriptions");
                 });
 
-            modelBuilder.Entity("Katering.Data.Order.MealOrder", b =>
-                {
-                    b.Property<int>("MealOrderId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MealOrderId"));
-
-                    b.Property<int?>("MealId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("OrderId")
-                        .HasColumnType("int");
-
-                    b.HasKey("MealOrderId");
-
-                    b.HasIndex("MealId");
-
-                    b.HasIndex("OrderId");
-
-                    b.ToTable("MealsOrder");
-                });
-
             modelBuilder.Entity("Katering.Data.Order.Order", b =>
                 {
                     b.Property<int>("OrderID")
@@ -223,29 +203,6 @@ namespace Katering.Migrations
                     b.HasKey("PaymentID");
 
                     b.ToTable("Payments");
-                });
-
-            modelBuilder.Entity("Katering.Data.Order.SubscriptionOrder", b =>
-                {
-                    b.Property<int>("SubscriptionOrderId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SubscriptionOrderId"));
-
-                    b.Property<int?>("MealId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("OrderId")
-                        .HasColumnType("int");
-
-                    b.HasKey("SubscriptionOrderId");
-
-                    b.HasIndex("MealId");
-
-                    b.HasIndex("OrderId");
-
-                    b.ToTable("OrdersOrder");
                 });
 
             modelBuilder.Entity("Katering.Data.Users.Administrator", b =>
@@ -413,21 +370,6 @@ namespace Katering.Migrations
                     b.Navigation("Diet");
                 });
 
-            modelBuilder.Entity("Katering.Data.Order.MealOrder", b =>
-                {
-                    b.HasOne("Katering.Data.Food.Meal", "Payment")
-                        .WithMany()
-                        .HasForeignKey("MealId");
-
-                    b.HasOne("Katering.Data.Order.Order", "Order")
-                        .WithMany()
-                        .HasForeignKey("OrderId");
-
-                    b.Navigation("Order");
-
-                    b.Navigation("Payment");
-                });
-
             modelBuilder.Entity("Katering.Data.Order.Order", b =>
                 {
                     b.HasOne("Katering.Data.Order.Payment", "Payment")
@@ -441,21 +383,6 @@ namespace Katering.Migrations
                     b.Navigation("Payment");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Katering.Data.Order.SubscriptionOrder", b =>
-                {
-                    b.HasOne("Katering.Data.Food.Meal", "Payment")
-                        .WithMany()
-                        .HasForeignKey("MealId");
-
-                    b.HasOne("Katering.Data.Order.Order", "Order")
-                        .WithMany()
-                        .HasForeignKey("OrderId");
-
-                    b.Navigation("Order");
-
-                    b.Navigation("Payment");
                 });
 
             modelBuilder.Entity("Katering.Data.Users.Administrator", b =>
