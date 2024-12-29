@@ -1,6 +1,7 @@
 using Katering;
 using Katering.Components;
 using Katering.Entities;
+using Katering.Data.Service;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,7 +10,16 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddDbContext<KateringDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+builder.Services.AddDbContextFactory<KateringDbContext>(options =>
+{
+	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+
+builder.Services.AddRazorPages();
+builder.Services.AddServerSideBlazor();
+    
+// Rejestracja RegistrationService
+builder.Services.AddSingleton<RegistrationService>();
 
 var app = builder.Build();
 
@@ -22,7 +32,6 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseStaticFiles();
 app.UseAntiforgery();
 
