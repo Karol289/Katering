@@ -20,13 +20,13 @@ namespace Katering.Data.Service
 					var exsitingUser = context.Users.Where(user => user.Email == model.Email).FirstOrDefault();
 					if (exsitingUser == null)
 					{
-						var newUser = new User.User
+						var newUser = new Users.User
 						{
 							Email = model.Email,
 							Name = model.Name,
 							Password = model.Password,
 							Surname = model.Surname,
-							Type = User.UserType.CLIENT,
+							Type = Users.UserType.CLIENT,
 						};
 						context.Users.Add(newUser);
 						context.SaveChanges();

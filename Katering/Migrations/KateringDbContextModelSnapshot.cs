@@ -75,16 +75,16 @@ namespace Katering.Migrations
 
             modelBuilder.Entity("Katering.Data.Food.MealCategory", b =>
                 {
-                    b.Property<int>("MealCategoryID")
+                    b.Property<int>("MealCategoryId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MealCategoryID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MealCategoryId"));
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("MealCategoryID");
+                    b.HasKey("MealCategoryId");
 
                     b.ToTable("MealCategories");
                 });

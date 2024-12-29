@@ -12,7 +12,7 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddDbContextFactory<KateringDbContext>(options =>
 {
-	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+	options.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
 });
 
 builder.Services.AddRazorPages();

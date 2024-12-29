@@ -15,16 +15,36 @@ namespace Katering.Migrations
                 name: "MealCategories",
                 columns: table => new
                 {
-                    MealCategoryID = table.Column<int>(type: "int", nullable: false),
+                    MealCategoryId = table.Column<int>(type: "int", nullable: false)
+                    .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(40)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey(name: "PK_MealCategories", x => x.MealCategoryID);          
-                }
-             
-                );
+                    table.PrimaryKey(name: "PK_MealCategories", x => x.MealCategoryId);          
+                });
+
+
+             Seed(migrationBuilder);
         }
+
+
+        protected void Seed(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.InsertData(
+            table: "MealCategories",
+            columnTypes: new string[] { "nvarchar(40)"},
+            columns: new[] { "Name" },
+            values: new object[,]
+            {
+                     { "Breakfast" },
+                     { "Lunch" },
+                     { "Dinner" },
+                     { "Snack" },
+                     { "Dessert" }
+            });
+        }
+
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)

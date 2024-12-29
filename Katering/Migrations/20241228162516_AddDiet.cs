@@ -24,19 +24,27 @@ namespace Katering.Migrations
                 }
                 );
 
+            Seed(migrationBuilder);
+        }
 
-            // Powinno dodawac dane ale nie dziala :(
-            //migrationBuilder.InsertData(
-            //    table:"Diets",
-            //    columns: new[] {"Name"},
-            //    values: new object[]
-            //    {
-            //        "Basic",
-            //        "Vege",
-            //        "Vegetarian",
-            //        "Keto"
-            //    }
-            //    );
+        protected void Seed(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.InsertData(
+            table: "Diets",
+            columnTypes: new string[] { "nvarchar(50)" },
+            columns: new[] { "Name" },
+            values: new object[,]
+            {
+                { "Standard" },
+                { "Low Fat" },
+                { "High Protein" },
+                { "Balanced" },
+                { "Vegetarian" },
+                { "Vegan" },
+                { "Gluten-Free" },
+                { "Pescatarian" }
+            });
+
         }
 
         /// <inheritdoc />

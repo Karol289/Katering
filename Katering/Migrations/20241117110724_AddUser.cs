@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Katering.Data.Users;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -26,6 +27,13 @@ namespace Katering.Migrations
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
                 });
+
+            Seed(migrationBuilder);
+        }
+
+        protected void Seed(MigrationBuilder migrationBuilder)
+        {
+
         }
 
         /// <inheritdoc />
