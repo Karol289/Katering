@@ -1,0 +1,61 @@
+﻿@page "/raports"
+@inject HttpClient Http
+@inject IJSRuntime JSRuntime
+
+
+
+<h1>Raporty PDF</h1>
+<p>
+    <button @onclick="DownloadReport">Pobierz raport</button>
+</p>
+
+@if (!string.IsNullOrEmpty(ErrorMessage))
+{
+    <div class="text-danger">@ErrorMessage</div>
+}
+
+@code {
+    private string ErrorMessage = null;
+
+    private async Task DownloadReport()
+    {
+        try
+        {
+            string serverName = "./";
+            string databaseName = "KateringDB";
+
+            string connectionString = "http://127.0.0.1:5000/pdf?server=" + serverName + "&database=" + databaseName;
+
+
+            var response = await Http.GetAsync(connectionString);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var pdfBytes = await response.Content.ReadAsByteArrayAsync();
+                await JSRuntime.InvokeVoidAsync("openPdf", pdfBytes);
+            }
+            else
+            {
+                ErrorMessage = $"File download error: {response.StatusCode}";
+            }
+
+            ErrorMessage = "";
+        }
+        catch (Exception e)
+        {
+            ErrorMessage = "PDF download failed";
+        }
+    }
+
+}
+
+<script>
+    function openPdf(pdfBytes) {
+   
+        const byteArray = new Uint8Array(pdfBytes);
+        const blob = new Blob([byteArray], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+
+        window.open(url, '_blank');
+    }
+</script>
