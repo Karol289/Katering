@@ -17,7 +17,13 @@ builder.Services.AddDbContextFactory<KateringDbContext>(options =>
 
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-    
+
+builder.Services.AddScoped<Katering.Data.SessionState.SessionState>();
+
+// Rejestrowanie UserService
+builder.Services.AddScoped<Katering.Data.Service.UserService>();  
+
+
 // Rejestracja RegistrationService
 builder.Services.AddSingleton<RegistrationService>();
 

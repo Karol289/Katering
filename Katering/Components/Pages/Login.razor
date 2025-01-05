@@ -9,13 +9,33 @@
 
 <h3>Login</h3>
 
-<EditForm EditContext="editContext" OnValidSubmit="LoginUser">
+<EditForm EditContext="editContext" OnValidSubmit="LoginUser" FormName="LoginName">
+    <DataAnnotationsValidator />
 
+    <label>
+        Login:
+        <InputText @bind-Value="Model!.Login"/>
+    </label>
+
+    <label>
+        Hasło:
+        <InputText @bind-Value="Model!.Password" type="password"/>
+    </label>
+
+    <button type="submit">Zaloguj się</button>
 
 </EditForm>
 
+@if (!string.IsNullOrEmpty(ErrorMessage))
+{
+    <p class="text-danger">@ErrorMessage</p>
+}
+
 @code {
-	private EditContext editContext;
+    private EditContext editContext;
+
+    private string? ErrorMessage { get; set; }
+
     public LoginModel Model { get; set; } = new LoginModel();
 
     protected override void OnInitialized()
@@ -31,15 +51,17 @@
         }
         else if (result == LoginResult.UNKNOWN_EMAIL)
         {
-            // Handle unknown email
+            ErrorMessage = "Nieznany email, spróbuj ponownie";
         }
         else
         {
-            // Handle other errors
+            ErrorMessage = "Wystąpił błąd przy logowaniu";
         }
     }
     private void NavigateByUserRole()
     {
+        Console.WriteLine($"User Role: Admin - {SessionState.IsAdministration()}, Moderator - {SessionState.IsModerator()}, Contractor - {SessionState.IsContractor()}, Client - {SessionState.IsClient()}");
+
         if (SessionState.IsAdministration())
             NavigationManager.NavigateTo("/admin-dashboard");
         else if (SessionState.IsModerator())
@@ -47,6 +69,7 @@
         else if (SessionState.IsContractor())
             NavigationManager.NavigateTo("/contractor-dashboard");
         else if (SessionState.IsClient())
-            NavigationManager.NavigateTo("/client-dashboard");
+            NavigationManager.NavigateTo("/");
+        Console.WriteLine("No roles matched. Check SessionState implementations.");
     }
 }

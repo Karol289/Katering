@@ -7,7 +7,7 @@
     @if (NavigationManager.Uri.EndsWith("/"))
     {
     <div class="auth-links">
-        <a href="/login" class="btn-custom mx-3">Zaloguj się</a>
+        <a href="javascript:void(0);" class="btn-custom mx-3" @onclick="RefreshPage2">Zaloguj się</a>
         <a href="javascript:void(0);" class="btn-custom mx-3" @onclick="RefreshPage">Zarejestruj się</a>
     </div>
     }
@@ -21,6 +21,10 @@
     private void RefreshPage1()
     {
         NavigationManager.NavigateTo("/", true);
+    }
+    private void RefreshPage2()
+    {
+        NavigationManager.NavigateTo("/login", true);
     }
 }
 
