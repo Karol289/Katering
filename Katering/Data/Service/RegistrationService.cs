@@ -11,9 +11,15 @@ namespace Katering.Data.Service
 		{
 			this.dbContext = dbContext;
 		}
-		public RegistrationResult RegisterClient(RegistrationModel model)
+		public RegistrationResult RegisterClient(RegistrationModel model, out List<string> errors)
 		{
-			using (var context = dbContext.CreateDbContext())
+            errors = model.Validate();
+            // Sprawdzenie, czy dane modelu są poprawne
+            if (errors.Any()) // Uwaga: Proszę sprawdzić czy nazwa metody `IsModleValid()` nie zawiera literówki, być może powinno być `IsModelValid()`.
+            {
+                return RegistrationResult.INVALID_DATA; // Można dodać nowy wynik w enum, jeśli jeszcze go nie ma
+            }
+            using (var context = dbContext.CreateDbContext())
 			{
 				try
 				{
@@ -52,5 +58,6 @@ public enum RegistrationResult
 	{
 		SUCCESS,
 		ALREADY_REGISTERED,
-		ERROR
-	}
+		ERROR,
+		INVALID_DATA // Nowy wynik wskazujący na błędy walidacji
+}

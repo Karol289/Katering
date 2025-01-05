@@ -1,7 +1,52 @@
 ﻿@page "/login"
+@using Katering.Data.Service
+@using Katering.Components.Pages.Model
+@using Katering.Data.SessionState
+@inject NavigationManager NavigationManager
+@inject RegistrationService RegistrationService
+@inject UserService UserService
+@inject SessionState SessionState
 
 <h3>Login</h3>
 
-@code {
+<EditForm EditContext="editContext" OnValidSubmit="LoginUser">
 
+
+</EditForm>
+
+@code {
+	private EditContext editContext;
+    public LoginModel Model { get; set; } = new LoginModel();
+
+    protected override void OnInitialized()
+    {
+        editContext = new EditContext(Model);
+    }
+    private async Task LoginUser()
+    {
+        var result = await UserService.Login(Model);
+        if (result == LoginResult.SUCCESS)
+        {
+            NavigateByUserRole();
+        }
+        else if (result == LoginResult.UNKNOWN_EMAIL)
+        {
+            // Handle unknown email
+        }
+        else
+        {
+            // Handle other errors
+        }
+    }
+    private void NavigateByUserRole()
+    {
+        if (SessionState.IsAdministration())
+            NavigationManager.NavigateTo("/admin-dashboard");
+        else if (SessionState.IsModerator())
+            NavigationManager.NavigateTo("/moderator-dashboard");
+        else if (SessionState.IsContractor())
+            NavigationManager.NavigateTo("/contractor-dashboard");
+        else if (SessionState.IsClient())
+            NavigationManager.NavigateTo("/client-dashboard");
+    }
 }

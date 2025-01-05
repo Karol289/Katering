@@ -1,32 +1,42 @@
+.logo-text {
+    color: #F6FCDF; /* Kolor tekstu logo */
+    font-size: 18px;
+    font-weight: bold;
+    text-decoration: none; /* Usuwa podkre?lenie */
+    transition: color 0.3s ease; /* Dodaje efekt hover */
+    text-transform: uppercase;
+}
+
+/* Kontener dla przycisków */
 .auth-links {
-    display: flex; /* U?yj Flexboxa do uk?adania linków */
-    justify-content: center; /* Wy?rodkuj linki w poziomie */
-    align-items: center; /* Wy?rodkuj linki w pionie */
-    gap: 20px; /* Odst?py mi?dzy linkami */
-    width: 100%; /* Rozci?gnij kontener na ca?? szeroko?? */
+    display: flex;
+    gap: 15px; /* Odst?p mi?dzy przyciskami */
+    margin-left: auto; /* Wypycha przyciski na praw? stron? */
 }
 
-.nav-link {
-    color: #F6FCDF; /* Kolor tekstu linków */
+.btn-custom {
+    color: #F6FCDF; /* Kolor tekstu */
+    border: 2px solid #F6FCDF; /* Obramowanie */
+    border-radius: 5px; /* Zaokr?glone rogi */
+    padding: 5px 15px; /* Wewn?trzny odst?p */
     text-decoration: none; /* Usu? podkre?lenie */
-    font-size: 16px; /* Rozmiar tekstu */
-    font-weight: bold; /* Pogrubienie tekstu */
-    transition: color 0.3s ease; /* P?ynna zmiana koloru */
+    font-size: 14px; /* Rozmiar tekstu */
+    transition: background-color 0.3s, color 0.3s; /* P?ynna zmiana koloru */
+    text-align: right; /* Wyrównanie tekstu do prawej */
+    display: block; /* Upewnia si?, ?e styl text-align dzia?a */
 }
 
-    .nav-link:hover {
-        color: #c2c5aa; /* Zmiana koloru linku po najechaniu */
+    .btn-custom:hover {
+        background-color: #c2c5aa; /* Kolor t?a po najechaniu */
+        color: #669933; /* Kolor tekstu po najechaniu */
     }
-
-
+/* Pasek górny */
 .top-row {
-    width: 100%; /* Rozci?gnij pasek nawigacyjny na ca?? szeroko?? */
-    background-color: #628328; /* T?o paska nawigacyjnego */
+    width: 100%; /* Pasek na ca?? szeroko?? strony */
+    background-color: #628328; /* Kolor t?a paska górnego */
     padding: 10px 20px; /* Odst?py wewn?trzne */
-    display: flex; /* Flexbox dla ?atwego wyrównania */
-    justify-content: center; /* Wy?rodkowanie zawarto?ci poziomo */
-    align-items: center; /* Wy?rodkowanie zawarto?ci pionowo */
-    position: sticky; /* Przyklej pasek do górnej cz??ci strony */
+    display: flex;
+    position: sticky; /* Pozostaje na górze podczas przewijania */
     top: 0;
     z-index: 1000;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Delikatny cie? */

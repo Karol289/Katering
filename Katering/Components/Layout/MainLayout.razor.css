@@ -2,42 +2,19 @@
     position: relative;
     display: flex;
     flex-direction: column;
+    background-color: #719237;
+    min-height: 100vh;
 }
 
 .main-layout {
     display: flex;
     flex-direction: column;
     height: 100vh;
-}
-
-/* Pasek górny */
-.top-row {
-    width: 100%; /* Pasek na całą szerokość strony */
-    background-color: #628328; /* Kolor tła */
-    padding: 10px 20px; /* Odstępy wewnętrzne */
-    display: flex;
-    position: sticky; /* Pozostaje na górze podczas przewijania */
-    top: 0;
-    z-index: 1000;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Delikatny cień */
-}
-
-
-.logo-text {
-    color: #F6FCDF; /* Kolor tekstu logo */
-    font-size: 18px;
-    font-weight: bold;
-    text-decoration: none; /* Usuwa podkreślenie */
-    transition: color 0.3s ease; /* Dodaje efekt hover */
-    text-transform: uppercase;
+    width: 100%;
 }
 
 main {
     flex: 1;
-}
-
-.main-layout {
-    width: 100%;
 }
 
 body {

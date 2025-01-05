@@ -14,6 +14,8 @@ namespace Katering.Data.Users
         public string? HouseNumber { get; set; }
         public string? PhoneNumber { get; set; }
 
+        public int UserId { get; set; }
+
         [ForeignKey("UserId")]
 
         public User User { get; set; }

@@ -1,86 +1,96 @@
 ﻿@page "/register"
-@using Katering.Components.Pages.Model
-@using Katering.Data.Users
+@using System.ComponentModel.DataAnnotations
 @using Katering.Data.Service
 @inject NavigationManager NavigationManager
 @inject RegistrationService RegistrationService
+@inject ILogger<Register> Logger
 
 <h3>Witamy w rejestracji.</h3>
 <h3>Jeżeli jesteś tu pierwszy raz załóż konto</h3>
 
-<EditForm Model="Model" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit" FormName="RegistrationForm">
+<EditForm Model="Model" OnValidSubmit="Submit" FormName="RegistrationForm">
     <DataAnnotationsValidator />
-    <ValidationSummary />
 
-    <div>
-        <label>
-            Email:
-            <InputText @bind-Value="Model.Email" />
-        </label>
-        <ValidationMessage For="@(() => Model.Email)" />
-    </div>
-    <div>
-        <label>
-            Hasło:
-            <InputText @bind-Value="Model.Password" type="password" />
-        </label>
-        <ValidationMessage For="@(() => Model.Password)" />
-    </div>
-    <div>
-        <label>
-            Powtórz hasło:
-            <InputText @bind-Value="Model.PasswordVerification" type="password" />
-        </label>
-        <ValidationMessage For="@(() => Model.PasswordVerification)" />
-    </div>
-    <div>
-        <label>
-            Imię:
-            <InputText @bind-Value="Model.Name" />
-        </label>
-        <ValidationMessage For="@(() => Model.Name)" />
-    </div>
-    <div>
-        <label>
-            Nazwisko:
-            <InputText @bind-Value="Model.Surname" />
-        </label>
-        <ValidationMessage For="@(() => Model.Surname)" />
-    </div>
+    <label>
+        Email:
+        <InputText @bind-Value="Model!.Email" />
+    </label>
+
+    <label>
+        Hasło:
+        <InputText @bind-Value="Model!.Password" type="password" />
+    </label>
+
+    <label>
+        Powtórz hasło:
+        <InputText @bind-Value="Model!.PasswordVerification" type="password" />
+    </label>
+
+    <label>
+        Imię:
+        <InputText @bind-Value="Model!.Name" />
+    </label>
+
+    <label>
+        Nazwisko:
+        <InputText @bind-Value="Model!.Surname" />
+    </label>
+
     <button type="submit">Zarejestruj się</button>
 </EditForm>
 
-@if (!string.IsNullOrEmpty(RegistrationMessage))
+@if (!string.IsNullOrEmpty(ErrorMessage))
 {
-    <div class="text-danger">@RegistrationMessage</div>
+    <p class="text-danger">@ErrorMessage</p>
 }
 
 @code {
-    private RegistrationModel Model { get; set; } = new RegistrationModel();
-    private string? RegistrationMessage;
+    [SupplyParameterFromForm]
 
-    private async Task HandleValidSubmit()
+    private Katering.Components.Pages.Model.RegistrationModel Model { get; set; } = new();
+
+    private string? ErrorMessage { get; set; }
+
+    protected override void OnInitialized() => Model ??= new();
+
+    private async Task Submit()
     {
-        var result = RegistrationService.RegisterClient(Model);
-        switch (result)
+        if (Model == null)
         {
-            case RegistrationResult.SUCCESS:
-                RegistrationMessage = null; // Usuń komunikaty o błędach
-                NavigationManager.NavigateTo("/");
-                break;
-
-            case RegistrationResult.ALREADY_REGISTERED:
-                RegistrationMessage = "Email już jest zarejestrowany";
-                break;
-
-            case RegistrationResult.ERROR:
-                RegistrationMessage = "Nie można zakończyć rejestracji";
-                break;
+            ErrorMessage = "Nieprawidłowe dane.";
+            return;
         }
-    }
+        List<string> validationErrors;
+        var result = RegistrationService.RegisterClient(Model, out validationErrors);
 
-    private void HandleInvalidSubmit()
-    {
-        RegistrationMessage = "Formularz zawiera błędy. Popraw dane.";
+        try
+        {
+            switch (result)
+            {
+                case RegistrationResult.SUCCESS:
+                    Logger.LogInformation("Rejestracja zakończona sukcesem dla {Email}", Model.Email);
+                    await Task.Delay(100); // Opcjonalne krótkie opóźnienie, aby umożliwić przetworzenie
+                    NavigationManager.NavigateTo("/login");
+                break;
+
+                case RegistrationResult.ALREADY_REGISTERED:
+                    ErrorMessage = "Email już jest zarejestrowany.";
+                    break;
+
+                case RegistrationResult.INVALID_DATA:
+                    // Łączymy wszystkie komunikaty o błędach w jeden ciąg
+                    ErrorMessage = String.Join("\n", validationErrors);
+                    break;
+
+                case RegistrationResult.ERROR:
+                    ErrorMessage = "Wystąpił błąd podczas rejestracji.";
+                    break;
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Błąd podczas nawigacji.");
+            ErrorMessage = "Wystąpił problem z nawigacją.";
+        }
     }
 }
