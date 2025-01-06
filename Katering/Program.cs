@@ -3,6 +3,7 @@ using Katering.Components;
 using Katering.Entities;
 using Katering.Data.Service;
 using Microsoft.EntityFrameworkCore;
+using Katering.Data.SessionState;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +18,15 @@ builder.Services.AddDbContextFactory<KateringDbContext>(options =>
 
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-    
+
+builder.Services.AddScoped<Katering.Data.SessionState.SessionState>();
+
+builder.Services.AddScoped<SessionState>();
+
+// Rejestrowanie UserService
+builder.Services.AddScoped<Katering.Data.Service.UserService>();  
+
+
 // Rejestracja RegistrationService
 builder.Services.AddSingleton<RegistrationService>();
 

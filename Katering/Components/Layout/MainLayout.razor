@@ -1,18 +1,39 @@
 ﻿@inherits LayoutComponentBase
+@using Katering.Data.SessionState
+@inject SessionState SessionState
 
-<div class="page" style="background-color: #719237; min-height: 100vh;">
-    <div class="main-layout">
-        <div class="top-row d-flex align-items-center">
-            <div>
-                <a href="/" class="logo-text">Katering Wieża Magów</a>
-            </div>
-        <!-- Pasek nawigacyjny -->
-        <NavMenu />
-
+<div class="page">
+    <div class="main-layout">   
+        @if (SessionState.IsLogged)
+        {
+            @if (SessionState.IsClient())
+            {
+                <ClientNavMenu/>
+            }
+            else if (SessionState.IsAdministration())
+            {
+                <AdminNavMenu/>
+            }
+            else if (SessionState.IsModerator())
+            {
+                <ModeratorNavMenu/>
+            }
+            else if (SessionState.IsContractor())
+            {
+                <ContractorNavMenu/>
+            } 
+            else
+            {
+                throw new Exception("Niewspierany typ: " + SessionState.User.ToString());
+            }
+            <!-- Pasek nawigacyjny -->                  
+        } else
+        {
+            <NavMenu />
+        }
         <!-- Sekcja strony -->
         <main>
             @Body
         </main>
-        </div>
     </div>
 </div>

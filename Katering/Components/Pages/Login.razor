@@ -1,7 +1,75 @@
 ﻿@page "/login"
+@using Katering.Data.Service
+@using Katering.Components.Pages.Model
+@using Katering.Data.SessionState
+@inject NavigationManager NavigationManager
+@inject RegistrationService RegistrationService
+@inject UserService UserService
+@inject SessionState SessionState
 
 <h3>Login</h3>
 
-@code {
+<EditForm EditContext="editContext" OnValidSubmit="LoginUser" FormName="LoginName">
+    <DataAnnotationsValidator />
 
+    <label>
+        Login:
+        <InputText @bind-Value="Model!.Login"/>
+    </label>
+
+    <label>
+        Hasło:
+        <InputText @bind-Value="Model!.Password" type="password"/>
+    </label>
+
+    <button type="submit">Zaloguj się</button>
+
+</EditForm>
+
+@if (!string.IsNullOrEmpty(ErrorMessage))
+{
+    <p class="text-danger">@ErrorMessage</p>
+}
+
+@code {
+    private EditContext editContext;
+
+    private string? ErrorMessage { get; set; }
+
+    public LoginModel Model { get; set; } = new LoginModel();
+
+    protected override void OnInitialized()
+    {
+        editContext = new EditContext(Model);
+    }
+    private async Task LoginUser()
+    {
+        var result = await UserService.Login(Model);
+        if (result == LoginResult.SUCCESS)
+        {
+            NavigateByUserRole();
+        }
+        else if (result == LoginResult.UNKNOWN_EMAIL)
+        {
+            ErrorMessage = "Nieznany email, spróbuj ponownie";
+        }
+        else
+        {
+            ErrorMessage = "Wystąpił błąd przy logowaniu";
+        }
+    }
+    private void NavigateByUserRole()
+    {
+        Console.WriteLine($"User Role: Admin - {SessionState.IsAdministration()}, Moderator - {SessionState.IsModerator()}, Contractor - {SessionState.IsContractor()}, Client - {SessionState.IsClient()}");
+
+        if (SessionState.IsAdministration())
+            NavigationManager.NavigateTo("/admin-dashboard");
+        else if (SessionState.IsModerator())
+            NavigationManager.NavigateTo("/moderator-dashboard");
+        else if (SessionState.IsContractor())
+            NavigationManager.NavigateTo("/contractor-dashboard");
+        else if (SessionState.IsClient())
+            NavigationManager.NavigateTo("/");
+        Console.WriteLine("No roles matched. Check SessionState implementations.");
+    }
 }

@@ -1,2 +1,30 @@
-﻿
+﻿@inject NavigationManager NavigationManager
+
+<div class="top-row d-flex align-items-center">
+    <div>
+        <a href="/" class="logo-text" @onclick="RefreshPage1">Katering Wieża Magów</a>
+    </div>
+    @if (NavigationManager.Uri.EndsWith("/"))
+    {
+    <div class="auth-links">
+        <a href="javascript:void(0);" class="btn-custom mx-3" @onclick="RefreshPage2">Zaloguj się</a>
+        <a href="javascript:void(0);" class="btn-custom mx-3" @onclick="RefreshPage">Zarejestruj się</a>
+    </div>
+    }
+</div>
+
+@code {
+    private void RefreshPage()
+    {
+        NavigationManager.NavigateTo("/register", true); // Przeładowuje stronę logowania
+    }
+    private void RefreshPage1()
+    {
+        NavigationManager.NavigateTo("/", true);
+    }
+    private void RefreshPage2()
+    {
+        NavigationManager.NavigateTo("/login", true);
+    }
+}
 

@@ -13,8 +13,52 @@
     color: #719237; /* Kolor zielony */
 }
 
-/* Styl tekstu */
-.diet-text {
+/* Styl dla Slider 1 */
+#slider1 {
+    position: absolute;
+    top: 130px;
+    left: 800px;
+    width: 500px;
+    height: 750px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+/* Styl dla Slider 2 */
+#slider2 {
+    position: absolute;
+    top: 130px;
+    left: 1300px;
+    width: 380px;
+    height: 380px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+/* Styl dla Slider 3 */
+#slider3 {
+    position: absolute;
+    bottom: 75px;
+    left: 1300px;
+    width: 380px;
+    height: 380px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.slider-image {
+    width: 100%;
+    height: auto;
+}
+
+        /* Styl tekstu */
+        .diet-text {
     font-size: 20px;
     line-height: 1.8; /* Odstępy między liniami */
     margin: 0;
