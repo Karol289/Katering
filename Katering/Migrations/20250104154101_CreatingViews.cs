@@ -12,7 +12,7 @@ namespace Katering.Migrations
         {
             migrationBuilder.Sql(
                 "CREATE VIEW MealsView AS " +
-                "Select Calories, Price FROM Meals"
+                "Select Calories, Price FROM Meals;"
                 );
         }
 
