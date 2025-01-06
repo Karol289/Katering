@@ -11,23 +11,10 @@ app = Flask(__name__)
 @app.route('/pdf', methods = ['GET'])
 def pdf():
     
+    serverName = request.args.get('server')
+    databaseName = request.args.get('database')
     
-    '''
-    Notatki
-    Reczy które musimy otrzymac:
-    
-    ?
-    -nazwa serwera
-    -nazwa bazy danych
-    
-    jaki to ma być raport
-    
-    '''
-    
-    name = request.args.get('server')
-    email = request.args.get('database')
-    
-    data = SQLConnection(name, email)
+    data = SQLConnection(serverName, databaseName)
     
     df = data.queryAsDataframe("select * from mealsview")
     
@@ -50,7 +37,7 @@ def pdf():
      
     headers = {
         'Content-Type': 'aplication/pdf',
-        'Content-Disposition': f"attachment;filename={name}.pdf"
+        'Content-Disposition': f"attachment;filename=raport.pdf"
     }
     
    # response = Response(pdf_output, headers=headers)
@@ -58,7 +45,7 @@ def pdf():
     response = make_response((pdf.output(dest='S').encode('latin-1')))
     
     
-    response.headers.set('Content-Disposition', 'attachment', filename=name + '.pdf')
+    response.headers.set('Content-Disposition', 'attachment', filename="raport" + '.pdf')
     response.headers.set('Content-Type', 'application/pdf')
     
     return response

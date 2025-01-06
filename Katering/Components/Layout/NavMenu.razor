@@ -9,6 +9,7 @@
     <div class="auth-links">
         <a href="javascript:void(0);" class="btn-custom mx-3" @onclick="RefreshPage2">Zaloguj się</a>
         <a href="javascript:void(0);" class="btn-custom mx-3" @onclick="RefreshPage">Zarejestruj się</a>
+        <a href="javascript:void(0);" class="btn-custom mx-3" @onclick="RefreshPageRaport">Raporty test</a>
     </div>
     }
 </div>
@@ -25,6 +26,10 @@
     private void RefreshPage2()
     {
         NavigationManager.NavigateTo("/login", true);
+    }
+    private void RefreshPageRaport()
+    {
+        NavigationManager.NavigateTo("/raports", true);
     }
 }
 
