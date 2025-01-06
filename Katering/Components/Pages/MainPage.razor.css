@@ -13,6 +13,11 @@
     color: #719237; /* Kolor zielony */
 }
 
+.image {
+    width: 300px;
+    height: 200px;
+}
+
 /* Styl tekstu */
 .diet-text {
     font-size: 20px;

@@ -32,3 +32,4 @@ namespace Katering.Data.SessionState
         }
     }
 }
+

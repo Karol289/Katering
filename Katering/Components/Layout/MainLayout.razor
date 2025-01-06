@@ -1,9 +1,36 @@
 ﻿@inherits LayoutComponentBase
+@using Katering.Data.SessionState
+@inject SessionState SessionState
 
 <div class="page">
-    <div class="main-layout">      
-        <!-- Pasek nawigacyjny -->
-        <NavMenu />
+    <div class="main-layout">   
+        @if (SessionState.IsLogged)
+        {
+            @if (SessionState.IsClient())
+            {
+                <ClientNavMenu/>
+            }
+            else if (SessionState.IsAdministration())
+            {
+                <AdminNavMenu/>
+            }
+            else if (SessionState.IsModerator())
+            {
+                <ModeratorNavMenu/>
+            }
+            else if (SessionState.IsContractor())
+            {
+                <ContractorNavMenu/>
+            } 
+            else
+            {
+                throw new Exception("Niewspierany typ: " + SessionState.User.ToString());
+            }
+            <!-- Pasek nawigacyjny -->                  
+        } else
+        {
+            <NavMenu />
+        }
         <!-- Sekcja strony -->
         <main>
             @Body
