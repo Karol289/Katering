@@ -2,6 +2,7 @@
 using Katering.Data.Users;
 using Katering.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System.Diagnostics.Contracts;
 
 namespace Katering.Data.Service
@@ -20,9 +21,7 @@ namespace Katering.Data.Service
         {
             using (var context = _dbContextFactory.CreateDbContext())
             {
-                var user = await context.Users
-                    .Where(u => u.Email == loginModel.Login && u.Password == loginModel.Password)
-                    .FirstOrDefaultAsync();
+                var user = context.Users.Where(u => u.Email == loginModel.Login && u.Password == loginModel.Password).First();
 
                 if (user == null)
                 {
@@ -30,14 +29,14 @@ namespace Katering.Data.Service
                 }
                 else
                 {
-                    var userEntity = MapToEntity(user, context);
+                    var userEntity = MapToEntityAsync(user, context);
                     _sessionState.LoginUser(userEntity);
                     return LoginResult.SUCCESS;
                 }
             }
         }
 
-        private UserEntity MapToEntity(User user, KateringDbContext context)
+        private UserEntity MapToEntityAsync(User user, KateringDbContext context)
         {
             switch (user.Type)
             {
@@ -59,9 +58,9 @@ namespace Katering.Data.Service
                             email: user.Email);
                     }
                 case UserType.CONTRACTOR:
-                    { 
-                    var contractor = context.Contractors.Where(c=>c.UserId== user.Id).FirstOrDefault();
-                        if(contractor == null)
+                    {
+                        var contractor = context.Contractors.Where(c => c.UserId == user.Id).FirstOrDefault();
+                        if (contractor == null)
                         {
                             throw new InvalidOperationException("Nie znaleziono danych kontrahenta");
                         }
@@ -73,30 +72,42 @@ namespace Katering.Data.Service
                             name: user.Name,
                             surname: user.Surname,
                             email: user.Email);
-                    }                  
+                    }
                 case UserType.CLIENT:
                     {
-                        var client = context.Clients.Where(c=>c.UserId == user.Id).FirstOrDefault();
-                        if(client == null)
+                        if (context.Clients.IsNullOrEmpty()) {
+                            return ClientEntity.CreateNotFullyRegistered(user.Id, user.Name, user.Surname, user.Email);
+                        }
+                        
+                        var client = context.Clients.Where(c => c.UserId == user.Id).First();
+                        if (client == null)
                         {
-                            throw new InvalidOperationException("Nie znaleziono danych klienta");
+                            return ClientEntity.CreateNotFullyRegistered(user.Id, user.Name, user.Surname, user.Email);
                         }
                         return new ClientEntity(
-                        clientId: client.Id,
-                            city: client.City,
-                            street: client.Street,
-                            houseNumber: client.HouseNumber,
-                            phoneNumber: client.PhoneNumber,
-                            id: user.Id,
-                            name: user.Name,
-                            surname: user.Surname,
-                            email: user.Email);
+                            clientId: client.Id,
+                                city: client.City.OrEmpty(),
+                                street: client.Street.OrEmpty(),
+                                houseNumber: client.HouseNumber.OrEmpty(),
+                                phoneNumber: client.PhoneNumber.OrEmpty(),
+                                id: user.Id,
+                                name: user.Name,
+                                surname: user.Surname,
+                                email: user.Email);
                     }
-                   
+
                 default:
                     throw new ArgumentOutOfRangeException("Nieznany typ użytkownika.");
 
             }
         }
+    }
+}
+
+public static class StringExtensions
+{
+    public static string OrEmpty(this string? source)
+    {
+        return source ?? string.Empty;
     }
 }

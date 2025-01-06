@@ -11,7 +11,7 @@ namespace Katering.Data.Users
         public required string CompanyName { get; set; }
 
         public int NIP { get; set; }
-
+       
         public int UserId { get; set; }
 
         [ForeignKey("UserId")]
