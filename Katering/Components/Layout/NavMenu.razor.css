@@ -1,3 +1,10 @@
+/* Kontener dla przycisków */
+.auth-links {
+    display: flex;
+    gap: 15px; /* Odst?p mi?dzy przyciskami */
+    margin-left: auto; /* Wypycha przyciski na praw? stron? */
+}
+
 .logo-text {
     color: #F6FCDF; /* Kolor tekstu logo */
     font-size: 18px;
@@ -5,13 +12,6 @@
     text-decoration: none; /* Usuwa podkre?lenie */
     transition: color 0.3s ease; /* Dodaje efekt hover */
     text-transform: uppercase;
-}
-
-/* Kontener dla przycisków */
-.auth-links {
-    display: flex;
-    gap: 15px; /* Odst?p mi?dzy przyciskami */
-    margin-left: auto; /* Wypycha przyciski na praw? stron? */
 }
 
 .btn-custom {

@@ -6,6 +6,67 @@
     min-height: 100vh;
 }
 
+.logo-text {
+    color: #F6FCDF; /* Kolor tekstu logo */
+    font-size: 18px;
+    font-weight: bold;
+    text-decoration: none; /* Usuwa podkre?lenie */
+    transition: color 0.3s ease; /* Dodaje efekt hover */
+    text-transform: uppercase;
+}
+
+.top-row {
+    width: 100%; /* Pasek na ca?? szeroko?? strony */
+    background-color: #628328; /* Kolor t?a paska górnego */
+    padding: 10px 20px; /* Odst?py wewn?trzne */
+    display: flex;
+    position: sticky; /* Pozostaje na górze podczas przewijania */
+    top: 0;
+    justify-content: space-between; /* Zapewnia, że elementy po lewej i prawej stronie są rozdzielone */
+    align-items: center;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Delikatny cie? */
+}
+
+.btn-cust {
+    margin: 0 10px;
+    color: #F6FCDF;
+    text-decoration: none;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.center-links {
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Zapewnia, że linki są pionowo wyśrodkowane */
+    flex-grow: 1; /* Pozwala elementowi rozciągnąć się między logo a auth-links */
+}
+
+.btn-custom {
+    color: #F6FCDF; /* Kolor tekstu */
+    border: 2px solid #F6FCDF; /* Obramowanie */
+    border-radius: 5px; /* Zaokrąglone rogi */
+    padding: 5px 15px; /* Wewnętrzny odstęp */
+    text-decoration: none; /* Usuwa podkreślenie */
+    font-size: 14px; /* Rozmiar tekstu */
+    transition: background-color 0.3s, color 0.3s; /* Płynna zmiana koloru */
+    display: inline-flex; /* Zapewnia, że elementy wewnątrz są odpowiednio wyświetlane */
+}
+
+    .btn-custom:hover {
+        background-color: #c2c5aa; /* Kolor tła po najechaniu */
+        color: #669933; /* Kolor tekstu po najechaniu */
+    }
+
+.auth-links {
+    margin-left: auto; /* Przesuwa wszystkie linki w .auth-links na prawo */
+    display: flex;
+    gap: 15px; /* Odstępy między linkami */
+}
+
 .main-layout {
     display: flex;
     flex-direction: column;

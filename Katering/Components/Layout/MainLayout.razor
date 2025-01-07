@@ -1,39 +1,50 @@
 ﻿@inherits LayoutComponentBase
 @using Katering.Data.SessionState
 @inject SessionState SessionState
+@inject NavigationManager NavigationManager
 
 <div class="page">
     <div class="main-layout">   
-        @if (SessionState.IsLogged)
-        {
-            @if (SessionState.IsClient())
-            {
-                <ClientNavMenu/>
+        <div class="top-row d-flex align-items-center">
+            <a href="/" class="logo-text">Katering Wieża Magów</a>
+            @if (SessionState.IsLogged)
+            {               
+                    @if (SessionState.IsClient())
+                    {
+                        <!-- Links for logged in clients -->
+
+                    <div class="center-links">
+                        <a class="btn-cust mx-3" href="/">Strona główna</a>
+                        <a class="btn-cust mx-3" href="/meals">Nasze posiłki</a>
+                        <a class="btn-cust mx-3" href="/cart">Koszyk</a>
+                    </div>
+                 
+                    }
+                <div class="auth-links">
+                    <a class="btn-cust mx-3">Witaj @SessionState.User.Name</a>
+                    <a class="btn-custom mx-3" @onclick="Logout">Wyloguj</a>
+                </div>
             }
-            else if (SessionState.IsAdministration())
-            {
-                <AdminNavMenu/>
-            }
-            else if (SessionState.IsModerator())
-            {
-                <ModeratorNavMenu/>
-            }
-            else if (SessionState.IsContractor())
-            {
-                <ContractorNavMenu/>
-            } 
             else
             {
-                throw new Exception("Niewspierany typ: " + SessionState.User.ToString());
+                <div class="auth-links">
+                    <a class="btn-custom mx-3" href="/login">Zaloguj</a>
+                    <a class="btn-custom mx-3" href="/register">Zarejestruj się</a>
+                </div>
             }
-            <!-- Pasek nawigacyjny -->                  
-        } else
-        {
-            <NavMenu />
-        }
+        </div>
+        
         <!-- Sekcja strony -->
         <main>
             @Body
         </main>
     </div>
 </div>
+
+@code {
+    private void Logout()
+    {
+        SessionState.LogoutUser();
+        NavigationManager.NavigateTo("/login", true);
+    }
+}

@@ -1,0 +1,29 @@
+﻿.top-row {
+    width: 100%; /* Pasek na ca?? szeroko?? strony */
+    background-color: #628328; /* Kolor t?a paska górnego */
+    padding: 10px 20px; /* Odst?py wewn?trzne */
+    display: flex;
+    position: sticky; /* Pozostaje na górze podczas przewijania */
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Delikatny cie? */
+}
+
+.client-nav a {
+    margin-right: 15px; /* Odstęp między linkami */
+    color: #007bff; /* Niebieski kolor linków */
+    text-decoration: none; /* Usunięcie podkreślenia */
+}
+
+    .client-nav a:hover {
+        text-decoration: underline; /* Podkreślenie przy najechaniu */
+    }
+
+.logo-text {
+    color: #F6FCDF; /* Kolor tekstu logo */
+    font-size: 18px;
+    font-weight: bold;
+    text-decoration: none; /* Usuwa podkre?lenie */
+    transition: color 0.3s ease; /* Dodaje efekt hover */
+    text-transform: uppercase;
+}
