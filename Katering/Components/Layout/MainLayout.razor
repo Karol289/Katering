@@ -11,15 +11,39 @@
             {               
                     @if (SessionState.IsClient())
                     {
-                        <!-- Links for logged in clients -->
-
+                        <!-- Links for logged in Clients -->
                     <div class="center-links">
                         <a class="btn-cust mx-3" href="/">Strona główna</a>
-                        <a class="btn-cust mx-3" href="/meals">Nasze posiłki</a>
-                        <a class="btn-cust mx-3" href="/cart">Koszyk</a>
+                        <a class="btn-cust mx-3" href="/meals">Menu</a>
+                        <a class="btn-cust mx-3" href="/cart">Opinie klientów</a>
+                        <a class="btn-cust mx-3" href="/cart">Koszyk</a>                       
                     </div>
-                 
-                    }
+
+                } else if (SessionState.IsAdministration())
+                {
+                    <!-- Links for logged in Admin -->
+                    <div class="center-links">
+                        <a class="btn-cust mx-3" href="/">Strona główna</a>
+                        <a class="btn-cust mx-3" href="/meals">Dodaj użytkownika</a>
+                        <a class="btn-cust mx-3" href="/cart">Raport</a>
+                    </div>
+                }else if (SessionState.IsContractor())
+                {
+                    <!-- Links for logged in Contractors -->
+                    <div class="center-links">
+                        <a class="btn-cust mx-3" href="/">Strona główna</a>
+                        <a class="btn-cust mx-3" href="/meals">Dodaj usługę</a>
+                        <a class="btn-cust mx-3" href="/cart">Raport</a>
+                    </div>
+                }else if (SessionState.IsModerator())
+                {
+                    <!-- Links for logged in Moderators -->
+                    <div class="center-links">
+                        <a class="btn-cust mx-3" href="/">Strona główna</a>
+                        <a class="btn-cust mx-3" href="/meals">Dodaj menu</a>
+                        <a class="btn-cust mx-3" href="/cart">Menu</a>
+                    </div>
+                }
                 <div class="auth-links">
                     <a class="btn-cust mx-3">Witaj @SessionState.User.Name</a>
                     <a class="btn-custom mx-3" @onclick="Logout">Wyloguj</a>

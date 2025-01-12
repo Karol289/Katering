@@ -69,7 +69,7 @@
         else if (SessionState.IsContractor())
             NavigationManager.NavigateTo("/contractor-dashboard");
         else if (SessionState.IsClient())
-            NavigationManager.NavigateTo("/client-dashboard");
+            NavigationManager.NavigateTo("/");
         Console.WriteLine("No roles matched. Check SessionState implementations.");
     }
 }

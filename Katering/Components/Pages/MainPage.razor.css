@@ -1,11 +1,12 @@
 ﻿/* Rysuje prostokąt po lewej stronei ekranu z zaokrąglonymi bokami*/
 .rectangle {
-    width: 600px; /* Szerokość prostokąta */
-    height: 800px; /* Wysokość prostokąta */
+    width: calc(33.33vw); /* 1/3 szerokości ekranu */
+    height: calc(85vh); /* Cała wysokość ekranu minus marginesy (opcjonalne) */
     background-color: white; /* Kolor prostokąta */
     border-radius: 60px; /* Zaokrąglone rogi */
     position: absolute; /* Pozycjonowanie absolutne */
-    top: 100px; /* Odległość od górnej krawędzi strony */
+    top: 10%; /* Odległość od górnej krawędzi strony */
+    bottom: 10%;
     left: 50px; /* Odległość od lewej krawędzi strony */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Delikatny cień */
     padding: 20px; /* Wewnętrzne odstępy */
@@ -13,13 +14,38 @@
     color: #719237; /* Kolor zielony */
 }
 
+/* Kontener przycisków */
+.button-container {
+    margin-top: 20px; /* Odstęp od tekstu */
+    display: flex;
+    justify-content: center; /* Wyśrodkowanie przycisków w poziomie */
+    gap: 15px; /* Odstęp między przyciskami */
+}
+
+/* Styl przycisków */
+.btn-action {
+    background-color: #719237; /* Kolor przycisku */
+    color: white; /* Kolor tekstu */
+    border: none; /* Usuń domyślną obwódkę */
+    border-radius: 20px; /* Zaokrąglone rogi */
+    padding: 10px 20px; /* Wewnętrzne odstępy */
+    font-size: 16px; /* Rozmiar tekstu */
+    font-weight: bold; /* Pogrubienie tekstu */
+    cursor: pointer; /* Zmień kursor na "rękę" */
+    transition: background-color 0.3s ease; /* Płynna zmiana koloru */
+}
+
+    .btn-action:hover {
+        background-color: #5b7a30; /* Ciemniejszy zielony przy najechaniu */
+    }
+
 /* Styl dla Slider 1 */
 #slider1 {
     position: absolute;
-    top: 130px;
-    left: 800px;
-    width: 500px;
-    height: 750px;
+    top: 13%;
+    left: 40%;
+    width: calc(50vw); /* 1/3 szerokości ekranu */
+    height: calc(80vh); /* Cała wysokość ekranu minus marginesy (opcjonalne) */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -27,38 +53,38 @@
 }
 
 /* Styl dla Slider 2 */
-#slider2 {
+/*#slider2 {
     position: absolute;
-    top: 130px;
-    left: 1300px;
-    width: 380px;
-    height: 380px;
-    display: flex;
+    top: -3.3%;
+    left: 65.1%;
+    width: calc(19vw);*/ /* 1/3 szerokości ekranu */
+    /*height: calc(75vh);*/ /* Cała wysokość ekranu minus marginesy (opcjonalne) */
+    /*display: flex;
     justify-content: center;
     align-items: center;
     overflow: hidden;
-}
+}*/
 
 /* Styl dla Slider 3 */
-#slider3 {
+/*#slider3 {
     position: absolute;
-    bottom: 48px;
-    left: 1300px;
-    width: 380px;
-    height: 380px;
-    display: flex;
+    bottom: -8.3%;
+    left: 65.1%;
+    width: calc(19vw);*/ /* 1/3 szerokości ekranu */
+    /*height: calc(75vh);*/ /* Cała wysokość ekranu minus marginesy (opcjonalne) */
+    /*display: flex;
     justify-content: center;
     align-items: center;
     overflow: hidden;
-}
+}*/
 
 .slider-image {
     width: 100%;
     height: auto;
 }
 
-        /* Styl tekstu */
-        .diet-text {
+/* Styl tekstu */
+.diet-text {
     font-size: 20px;
     line-height: 1.8; /* Odstępy między liniami */
     margin: 0;

@@ -19,6 +19,10 @@
         Tworzymy posiłki, które zachwycają jakością i różnorodnością, dostosowane do Twoich potrzeb.
         Zaufaj naszym kulinarnym mistrzom i odkryj nowy wymiar smaku!
     </p>
+    <div class="button-container">
+        <button class="btn-action">Poznaj ofertę</button>
+        <button class="btn-action">Skontaktuj się</button>
+    </div>
 </div>
 
 @* <div class="container my-5">
@@ -44,10 +48,10 @@
 
 <!-- Slider 1 -->
 <div class="image-slider" id="slider1">
-    <img src="/obiad1.jpg" class="slider-image" alt="Slider 1 Image">
+    <img src="/jedzenie1.png" class="slider-image" alt="Slider 1 Image">
 </div>
 
-<!-- Slider 2 -->
+@* <!-- Slider 2 -->
 <div class="image-slider" id="slider2">
     <img src="/deser1.jpg" class="slider-image" alt="Slider 2 Image">
 </div>
@@ -55,16 +59,16 @@
 <!-- Slider 3 -->
 <div class="image-slider" id="slider3">
     <img src="/kanapka1.jpg" class="slider-image" alt="Slider 3 Image">
-</div>
+</div> *@
 
 
 @code {
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         {
-            await JS.InvokeVoidAsync("initializeSlider", "slider1", new[] { "/obiad1.jpg", "/obiad2.jpg", "/obiad3.jpg", "/obiad4.jpg" });
-            await JS.InvokeVoidAsync("initializeSlider", "slider2", new[] { "/deser1.jpg", "/deser2.jpg" });
-            await JS.InvokeVoidAsync("initializeSlider", "slider3", new[] { "/kanapka1.jpg", "/kanapka2.jpg" });
+            await JS.InvokeVoidAsync("initializeSlider", "slider1", new[] { "/jedzenie1.png", "/jedzenie3.png", "/jedzenie3.png" });
+            // await JS.InvokeVoidAsync("initializeSlider", "slider2", new[] { "/deser1.jpg", "/deser2.jpg" });
+            // await JS.InvokeVoidAsync("initializeSlider", "slider3", new[] { "/kanapka1.jpg", "/kanapka2.jpg" });
         }
     }
 }
@@ -72,19 +76,18 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         initializeSlider('slider1', [
-            '/obiad1.jpg',
-            '/obiad2.jpg',
-            '/obiad3.jpg',
-            '/obiad4.jpg'
+            '/jedzenie1.png', 
+            '/jedzenie3.png', 
+            '/jedzenie3.png'
         ]);
-        initializeSlider('slider2', [
-            '/deser1.jpg',
-            '/deser2.jpg'
-        ]);
-        initializeSlider('slider3', [
-            '/kanapka1.jpg',
-            '/kanapka2.jpg'
-        ]);
+        // initializeSlider('slider2', [
+        //     '/deser1.jpg',
+        //     '/deser2.jpg'
+        // ]);
+        // initializeSlider('slider3', [
+        //     '/kanapka1.jpg',
+        //     '/kanapka2.jpg'
+        // ]);
     });
 
     function initializeSlider(sliderId, images) {
