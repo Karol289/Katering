@@ -12,31 +12,74 @@
     padding: 20px; /* Wewnętrzne odstępy */
     text-align: center; /* Wyśrodkowanie tekstu w poziomie */
     color: #719237; /* Kolor zielony */
+    display: flex;
+    flex-direction:column; /* Kolumnowe rozmieszczenie elementów */
+    justify-content: space-between; /* Ustawia elementy na dwóch połowach */
+}
+
+.katering-text {
+    font-size: 2.5vw; /* Rozmiar nagłówka */
+    line-height: 1.8; /* Odstępy między liniami */
+    letter-spacing: 7px; /* Odstęp miedzy literami */
+    margin: 0;
+    font-family: serif;
+    display: flex;
+    justify-content: center; /* Wyśrodkowanie tekstu w poziomie */
+    align-items: flex-start; /* Wyrównanie tekstu do góry */
+    flex: 1; /* Pierwsza połowa */
+    padding-top: 10px;
+}
+
+/* Nowy kontener dla dolnej części */
+.lower-section {
+    display: flex; /* Flexbox dla dolnej części */
+    flex-direction: column; /* Ustawienie elementów jeden pod drugim */
+    justify-content: flex-start; /* Ustawia elementy od góry */
+    align-items: center; /* Wyśrodkowanie zawartości w poziomie */
+    flex: 1; /* Zajmuje dolną przestrzeń */
+    width: 100%; /* Pełna szerokość dolnej sekcji */
+    padding-top: 10px; /* Przestrzeń między tekstem a przyciskami */
+}
+
+/* Styl tekstu */
+.diet-text {
+    font-size: 20px;
+    line-height: 2; /* Odstępy między liniami */
+    margin: 0;
+    font-family: serif, sans-serif; /* Czcionka */
+    display: flex;
+    justify-content: center; /* Wyśrodkowanie tekstu w poziomie */
+    align-items: center; /* Wyśrodkowanie tekstu w pionie */
+    position: relative;
+    top: -10%; /* Przesunięcie tekstu w górę */
 }
 
 /* Kontener przycisków */
 .button-container {
-    margin-top: 20px; /* Odstęp od tekstu */
     display: flex;
-    justify-content: center; /* Wyśrodkowanie przycisków w poziomie */
+    
     gap: 15px; /* Odstęp między przyciskami */
+   
+    padding-top: 30px; /* Odstęp od górnej części */
+    margin-top: 10%;
 }
 
 /* Styl przycisków */
 .btn-action {
     background-color: #719237; /* Kolor przycisku */
     color: white; /* Kolor tekstu */
-    border: none; /* Usuń domyślną obwódkę */
-    border-radius: 20px; /* Zaokrąglone rogi */
+    border-radius: 10px; /* Mniejsze zaokrąglenie rogów */
     padding: 10px 20px; /* Wewnętrzne odstępy */
-    font-size: 16px; /* Rozmiar tekstu */
+    font-size: 1vw; /* Rozmiar tekstu zależny od szerokości ekranu (proporcjonalny) */
     font-weight: bold; /* Pogrubienie tekstu */
     cursor: pointer; /* Zmień kursor na "rękę" */
-    transition: background-color 0.3s ease; /* Płynna zmiana koloru */
+    border: none;
+    transition: background-color 0.3s ease; /* Płynna zmiana koloru tła i obwódki */
+    min-width: 150px; /* Minimalna szerokość przycisku */
 }
 
     .btn-action:hover {
-        background-color: #5b7a30; /* Ciemniejszy zielony przy najechaniu */
+        background-color: #719237; /* Ciemniejszy zielony przy najechaniu */
     }
 
 /* Styl dla Slider 1 */
@@ -52,51 +95,9 @@
     overflow: hidden;
 }
 
-/* Styl dla Slider 2 */
-/*#slider2 {
-    position: absolute;
-    top: -3.3%;
-    left: 65.1%;
-    width: calc(19vw);*/ /* 1/3 szerokości ekranu */
-    /*height: calc(75vh);*/ /* Cała wysokość ekranu minus marginesy (opcjonalne) */
-    /*display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-}*/
-
-/* Styl dla Slider 3 */
-/*#slider3 {
-    position: absolute;
-    bottom: -8.3%;
-    left: 65.1%;
-    width: calc(19vw);*/ /* 1/3 szerokości ekranu */
-    /*height: calc(75vh);*/ /* Cała wysokość ekranu minus marginesy (opcjonalne) */
-    /*display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-}*/
-
 .slider-image {
     width: 100%;
     height: auto;
-}
-
-/* Styl tekstu */
-.diet-text {
-    font-size: 20px;
-    line-height: 1.8; /* Odstępy między liniami */
-    margin: 0;
-    font-family: serif, sans-serif; /* Czcionka */
-}
-
-.katering-text {
-    font-size: 45px; /* Rozmiar nagłówka */
-    line-height: 1.8; /*odstepy miedzy linijkami*/
-    letter-spacing: 7px; /*odstep miedzy literami*/
-    margin: 0;
-    font-family: serif;
 }
 
 .auth-links {

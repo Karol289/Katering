@@ -7,23 +7,26 @@
 @inject UserService UserService
 @inject SessionState SessionState
 
-<h3>Login</h3>
+<h3 class="login-title">Zaloguj się</h3>
 
 <EditForm EditContext="editContext" OnValidSubmit="LoginUser" FormName="LoginName">
     <DataAnnotationsValidator />
 
-    <label>
-        Login:
-        <InputText @bind-Value="Model!.Login"/>
-    </label>
+    <div class="form-group">
+        <label for="login">Login:</label>
+        <br/>
+        <InputText @bind-Value="Model.Login" id="login" />
+    </div>
 
-    <label>
-        Hasło:
-        <InputText @bind-Value="Model!.Password" type="password"/>
-    </label>
-
-    <button type="submit">Zaloguj się</button>
-
+    <div class="form-group">
+        <label for="password">Hasło:</label>
+        <br/>
+        <InputText @bind-Value="Model.Password" type="password" id="password"/>
+    </div>
+    <div class="form-group">
+        <button type="submit" class="submit-btn">Zaloguj się</button>
+    </div>
+   
 </EditForm>
 
 @if (!string.IsNullOrEmpty(ErrorMessage))
