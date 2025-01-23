@@ -15,7 +15,7 @@ namespace Katering.Migrations
                 table => new
                 {
                     PaymentId = table.Column<int>(type: "int", nullable: false),
-                    Value = table.Column<double>(type: "decimal(10,2)", nullable: false),
+                    Value = table.Column<double>(type: "float", nullable: false),
                     Status = table.Column<int>(type:"int", nullable: false),
                     Date = table.Column<DateTime>(type: "DateTime", nullable: false),
                     Method = table.Column<int>(type: "int", nullable: false),

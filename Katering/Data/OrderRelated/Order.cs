@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 using Katering.Data.Users;
 
-namespace Katering.Data.Order
+namespace Katering.Data.Orders
 {
 
     public class Order

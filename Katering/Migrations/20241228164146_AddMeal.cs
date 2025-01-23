@@ -17,11 +17,11 @@ namespace Katering.Migrations
                 {
                     MealId = table.Column<int>(type: "int", nullable: false)
                      .Annotation("SqlServer:Identity", "1, 1"),
-                    DietTypeId = table.Column<int>(type: "int", nullable: true),
+                    DietId = table.Column<int>(type: "int", nullable: true),
                     MealCategoryId = table.Column<int>(type: "int", nullable: true),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Calories = table.Column<double>(type: "decimal(5)", nullable: true),
-                    Price = table.Column<double>(type: "decimal(10,2)", nullable: true),
+                    Calories = table.Column<double>(type: "int", nullable: true),
+                    Price = table.Column<double>(type: "float", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -29,7 +29,7 @@ namespace Katering.Migrations
                     table.PrimaryKey("PK_Meals", x => x.MealId);
                     table.ForeignKey(
                         name: "FK_Meals_DietTypes_DietId",
-                        column: x => x.DietTypeId,
+                        column: x => x.DietId,
                         principalTable: "Diets",
                         principalColumn: "DietId",
                         onDelete: ReferentialAction.SetNull,
@@ -55,8 +55,8 @@ namespace Katering.Migrations
         {
             migrationBuilder.InsertData(
             table: "Meals",
-                columnTypes: new string[] { "DietTypeId", "MealCategoryId", "Name", "Calories", "Price", "Description" },
-                columns: new[] { "DietTypeId", "MealCategoryId", "Name", "Calories", "Price", "Description" },
+                columnTypes: new string[] { "DietId", "MealCategoryId", "Name", "Calories", "Price", "Description" },
+                columns: new[] { "DietId", "MealCategoryId", "Name", "Calories", "Price", "Description" },
                 values: new object[,]
                 {
                      { 1, 1, "Vegan Pancakes", 300, 5.99, "Delicious vegan pancakes with syrup" },

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Katering.Migrations
 {
     [DbContext(typeof(KateringDbContext))]
-    [Migration("20250106160820_AddUserIdToUsers")]
-    partial class AddUserIdToUsers
+    [Migration("20250123105957_poprawy_diet")]
+    partial class poprawy_diet
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,16 +27,16 @@ namespace Katering.Migrations
 
             modelBuilder.Entity("Katering.Data.Food.Diet", b =>
                 {
-                    b.Property<int>("DietID")
+                    b.Property<int>("DietId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DietID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DietId"));
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("DietID");
+                    b.HasKey("DietId");
 
                     b.ToTable("Diets");
                 });
@@ -94,11 +94,11 @@ namespace Katering.Migrations
 
             modelBuilder.Entity("Katering.Data.Food.Rating", b =>
                 {
-                    b.Property<int>("RatingID")
+                    b.Property<int>("RatingId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RatingID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RatingId"));
 
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
@@ -115,7 +115,7 @@ namespace Katering.Migrations
                     b.Property<int?>("Value")
                         .HasColumnType("int");
 
-                    b.HasKey("RatingID");
+                    b.HasKey("RatingId");
 
                     b.HasIndex("MealId");
 

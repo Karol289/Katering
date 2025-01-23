@@ -11,7 +11,7 @@ namespace Katering.Data.Food
     public class Rating
     {
         [Key]
-        public int RatingID { get; set; }
+        public int RatingId { get; set; }
 
         [ForeignKey("MealId")]
         public Meal? Meal{ get; set; }

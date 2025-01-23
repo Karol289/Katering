@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Katering.Data.Order
+namespace Katering.Data.Orders
 {
 
     public class Payment
