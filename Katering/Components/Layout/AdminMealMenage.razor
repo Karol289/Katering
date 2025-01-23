@@ -20,8 +20,8 @@
                 <input type="text" @bind="editName" placeholder="@meal.Name" />
                 <input type="number" @bind="editCalories" placeholder="@meal.Calories" />
                 <input type="number" @bind="editPrice" placeholder="@meal.Price" />
-                <input type="number" @@bind="DietType" placeholder="@meal.DietType" />
-                <input type="number" @@bind="mealCategory" placeholder="@meal.MealCategory" />
+                <input type="text" @bind="editDiet" placeholder="@meal.Diet?.DietId" />
+                <input type="text" @bind="editMealCategory" placeholder="@meal.MealCategory?.MealCategoryId" />
                 <input type="text" @bind="editDescription" placeholder="@meal.Description" />
                 <button @onclick="() => ConfirmSaveEdit(meal.MealId)">Save</button>
                 <button @onclick="CancelEdit">Cancel</button>
@@ -38,17 +38,19 @@ else
 
 @code {
     private string searchTerm;
-    private List<Meal> meals = null;
+    private List<Meal> meals = new List<Meal>();
     private int? editingMealId = null;
-    private string editName = null;
+    private string editName = string.Empty;
     private int? editCalories = null;
     private double? editPrice = null;
-    private string editDescription = null;
+    private int? editDiet = null;
+    private int? editMealCategory = null;
+    private string editDescription = string.Empty;
 
     private async Task SearchMealsById()
     {
         using var dbContext = DbContextFactory.CreateDbContext();
-        if (!string.IsNullOrEmpty(searchTerm) && int.TryParse(searchTerm, out int mealId))
+        if (int.TryParse(searchTerm, out int mealId))
         {
             meals = await dbContext.Meals
             .Where(m => m.MealId == mealId)
@@ -86,10 +88,12 @@ else
     private void EditMeal(Meal meal)
     {
         editingMealId = meal.MealId;
-        editName = meal.Name;
+        editName = meal.Name ?? string.Empty;
         editCalories = meal.Calories;
         editPrice = meal.Price;
-        editDescription = meal.Description;
+        editDiet = meal.Diet?.DietId;
+        editMealCategory = meal.MealCategory?.MealCategoryId;
+        editDescription = meal.Description ?? string.Empty;
     }
 
     private async Task ConfirmSaveEdit(int mealId)
@@ -114,6 +118,16 @@ else
             mealToEdit.Calories = editCalories;
             mealToEdit.Price = editPrice;
             mealToEdit.Description = editDescription;
+
+            if (editDiet.HasValue)
+            {
+                mealToEdit.Diet = await dbContext.Diets.FindAsync(editDiet.Value);
+            }
+
+            if (editMealCategory.HasValue)
+            {
+                mealToEdit.MealCategory = await dbContext.MealCategories.FindAsync(editMealCategory.Value);
+            }
 
             await dbContext.SaveChangesAsync();
             meals = await dbContext.Meals.ToListAsync();
