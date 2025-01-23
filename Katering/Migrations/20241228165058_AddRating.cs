@@ -18,7 +18,7 @@ namespace Katering.Migrations
                     RatingId = table.Column<int>(type: "int", nullable: false),
                     MealId = table.Column<int>(type: "int", nullable: false),
                     //UserID = table.Column<int>(type: "int", nullable: false),
-                    Value = table.Column<int>(type: "tinyint", nullable: true),
+                    Value = table.Column<int>(type: "int", nullable: true),
                     Date = table.Column<DateTime>(type: "DateTime", nullable: true),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },

@@ -8,7 +8,7 @@ namespace Katering.Data.Food
     public class Diet
     {
         [Key]
-        public int DietID { get; set; }
+        public int DietId { get; set; }
 
         public string? Name { get; set; }
 

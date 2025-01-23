@@ -1,12 +1,43 @@
 ﻿@page "/raports"
+@using Katering.Data
+@using Katering.Data.SessionState
+@using Katering.Data.Food
+@using Katering.Data.Orders
+@using Katering.Entities
+@using Katering.Data.Service
+@inject SessionState SessionState
+
 @inject HttpClient Http
 @inject IJSRuntime JSRuntime
 
+@inject RaportService RaportService
 
 
 <h1>Raporty PDF</h1>
 <p>
     <button @onclick="DownloadReport">Pobierz raport</button>
+    @if (SessionState.IsClient())
+    {
+@*          <select>
+             @if(meals != null){
+             @for (var i = 0; i < meals.Count; i++)
+             {
+                 <option value="@meals[i].MealId">@meals[i].Name</option>
+             }
+             }
+         </select> *@
+        <hr/>
+        <select>
+            @if (orders != null)
+            {
+                @for (var i = 0; i < orders.Count; i++)
+                {
+                    <option value="@orders[i].OrderID">@orders[i].Date.ToString()</option>
+                }
+            }
+        </select>
+
+    }
 </p>
 
 @if (!string.IsNullOrEmpty(ErrorMessage))
@@ -17,8 +48,21 @@
 @code {
     private string ErrorMessage = null;
 
+    private List<Meal> meals = null;
+    private List<Order> orders = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Pobierz dane z RaportService
+        meals = await Task.Run(() => RaportService.GetAllMeals());
+        orders = await Task.Run(() => RaportService.GetAllUserOrders(SessionState.User.UserId));
+    }
+
+
     private async Task DownloadReport()
     {
+
+       
         try
         {
             string serverName = "./";
@@ -48,6 +92,9 @@
     }
 
 }
+
+
+
 
 <script>
     function openPdf(pdfBytes) {

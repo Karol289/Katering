@@ -1,6 +1,6 @@
 ﻿using Katering.Data;
 using Katering.Data.Food;
-using Katering.Data.Order;
+using Katering.Data.Orders;
 using Katering.Data.Users;
 using Katering.Migrations;
 using Microsoft.EntityFrameworkCore;

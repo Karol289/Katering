@@ -5,7 +5,7 @@ using Katering.Data.Food;
 
 
 
-namespace Katering.Data.Order
+namespace Katering.Data.Orders
 {
 
     public class MealOrder

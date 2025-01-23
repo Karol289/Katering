@@ -30,6 +30,7 @@ builder.Services.AddScoped<Katering.Data.Service.UserService>();
 // Rejestracja RegistrationService
 builder.Services.AddSingleton<RegistrationService>();
 
+builder.Services.AddScoped<RaportService>();
 
 // Klient HTTP do API raportow
 builder.Services.AddHttpClient();
