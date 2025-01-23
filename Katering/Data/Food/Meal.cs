@@ -22,6 +22,8 @@ namespace Katering.Data.Food
         public int? Calories { get; set; }
         public double? Price { get; set; }
         public string? Description { get; set; }
+
+        public Meal() { }   
     }
 
 }

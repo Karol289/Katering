@@ -1,0 +1,128 @@
+@using Microsoft.EntityFrameworkCore
+@using Katering.Entities
+@using Katering.Data.Food
+@inject IDbContextFactory<KateringDbContext> DbContextFactory
+@inject IJSRuntime JSRuntime
+
+<h2>Manage Meals</h2>
+<input type="text" @bind="searchTerm" placeholder="Search meals by ID" />
+<button @onclick="SearchMealsById">Search</button>
+@if (meals != null && meals.Any())
+{
+    <ul>
+        @foreach (var meal in meals)
+        {
+            <li>@meal.MealId @meal.Name @meal.Calories @meal.Price @meal.Description</li>
+            <button @onclick="() => EditMeal(meal)">Edit</button>
+
+            @if (editingMealId == meal.MealId)
+            {
+                <input type="text" @bind="editName" placeholder="@meal.Name" />
+                <input type="number" @bind="editCalories" placeholder="@meal.Calories" />
+                <input type="number" @bind="editPrice" placeholder="@meal.Price" />
+                <input type="number" @@bind="DietType" placeholder="@meal.DietType" />
+                <input type="number" @@bind="mealCategory" placeholder="@meal.MealCategory" />
+                <input type="text" @bind="editDescription" placeholder="@meal.Description" />
+                <button @onclick="() => ConfirmSaveEdit(meal.MealId)">Save</button>
+                <button @onclick="CancelEdit">Cancel</button>
+            }
+
+            <button @onclick="() => ConfirmDeleteMeal(meal.MealId, meal.Name)">Delete</button>
+        }
+    </ul>
+}
+else
+{
+    <p>Enter correct Search value</p>
+}
+
+@code {
+    private string searchTerm;
+    private List<Meal> meals = null;
+    private int? editingMealId = null;
+    private string editName = null;
+    private int? editCalories = null;
+    private double? editPrice = null;
+    private string editDescription = null;
+
+    private async Task SearchMealsById()
+    {
+        using var dbContext = DbContextFactory.CreateDbContext();
+        if (!string.IsNullOrEmpty(searchTerm) && int.TryParse(searchTerm, out int mealId))
+        {
+            meals = await dbContext.Meals
+            .Where(m => m.MealId == mealId)
+            .ToListAsync();
+        }
+        else
+        {
+            meals = await dbContext.Meals.ToListAsync();
+        }
+    }
+
+    private async Task DeleteMeal(int mealId)
+    {
+        using var dbContext = DbContextFactory.CreateDbContext();
+        var mealToDelete = await dbContext.Meals.FindAsync(mealId);
+
+        if (mealToDelete != null)
+        {
+            dbContext.Meals.Remove(mealToDelete);
+            await dbContext.SaveChangesAsync();
+            meals = await dbContext.Meals.ToListAsync();
+        }
+    }
+
+    private async Task ConfirmDeleteMeal(int mealId, string mealName)
+    {
+        bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm", new object[] { $"Are you sure you want to delete {mealName}?" });
+        if (confirmed)
+        {
+            await DeleteMeal(mealId);
+            meals = null;
+        }
+    }
+
+    private void EditMeal(Meal meal)
+    {
+        editingMealId = meal.MealId;
+        editName = meal.Name;
+        editCalories = meal.Calories;
+        editPrice = meal.Price;
+        editDescription = meal.Description;
+    }
+
+    private async Task ConfirmSaveEdit(int mealId)
+    {
+        bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm", new object[] { "Are you sure you want to save changes?" });
+        if (confirmed)
+        {
+            await SaveEdit(mealId);
+            meals = null;
+        }
+    }
+
+    private async Task SaveEdit(int mealId)
+    {
+        editingMealId = mealId;
+        using var dbContext = DbContextFactory.CreateDbContext();
+        var mealToEdit = await dbContext.Meals.FindAsync(mealId);
+
+        if (mealToEdit != null)
+        {
+            mealToEdit.Name = editName;
+            mealToEdit.Calories = editCalories;
+            mealToEdit.Price = editPrice;
+            mealToEdit.Description = editDescription;
+
+            await dbContext.SaveChangesAsync();
+            meals = await dbContext.Meals.ToListAsync();
+            editingMealId = null;
+        }
+    }
+
+    private void CancelEdit()
+    {
+        editingMealId = null;
+    }
+}

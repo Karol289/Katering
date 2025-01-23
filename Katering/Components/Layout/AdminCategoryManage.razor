@@ -1,0 +1,136 @@
+@using Microsoft.EntityFrameworkCore
+@using Katering.Entities
+@using Katering.Data.Users
+@using Katering.Data.Food
+@inject IDbContextFactory<KateringDbContext> DbContextFactory
+@inject IJSRuntime JSRuntime
+
+<h2>Manage Users</h2>
+<input type="text" @bind="searchTerm" placeholder="Search users by ID" />
+<button @onclick="SearchUsersById">Search</button>
+@if (users != null && users.Any())
+{
+    <ul>
+        @foreach (var user in users)
+        {
+            <li>@user.Id @user.Name @user.Surname @user.Email @user.Type</li>
+            <button @onclick="() => EditUser(user)">Edit</button>
+
+            @if (editingUserId == user.Id)
+            {
+                <input type="text" @bind="editName" placeholder="@user.Name" />
+                <input type="text" @bind="editSurname" placeholder="@user.Surname" />
+                <input type="email" @bind="editEmail" placeholder="@user.Email" />
+                <input type="type" @bind="editType" placeholder="@user.Type" />
+                <button @onclick="() => ConfirmSaveEdit(user.Id)">Save</button>
+                <button @onclick="CancelEdit">Cancel</button>
+            }
+
+            @if (user.Type != UserType.ADMIN)
+            {
+                <button @onclick="() => ConfirmDeleteUser(user.Id, user.Name, user.Surname)">Delete</button>
+            }
+        }
+    </ul>
+}
+else
+{
+    <p>Enter correct Search value</p>
+}
+
+
+@code {
+    private string searchTerm;
+    private List<User> users = null;
+    private List<Meal> meals = null;
+    private int? editingUserId = null;
+    private string editName = null;
+    private string editSurname = null;
+    private string editEmail = null;
+    private string editType= null;
+
+    private async Task SearchUsersById()
+    {
+        using var dbContext = DbContextFactory.CreateDbContext();
+        if (int.TryParse(searchTerm, out int userId))
+        {
+            users = await dbContext.Users
+            .Where(u => u.Id == userId)
+            .ToListAsync();
+        }
+        else
+        {
+            users = await dbContext.Users.ToListAsync();
+        }
+    }
+
+    private async Task DeleteUser(int userId)
+    {
+        using var dbContext = DbContextFactory.CreateDbContext();
+        var userToDelete = await dbContext.Users.FindAsync(userId);
+
+        if (userToDelete != null)
+        {
+            dbContext.Users.Remove(userToDelete);
+            await dbContext.SaveChangesAsync();
+            users = await dbContext.Users.ToListAsync();
+        }
+    }
+
+    private async Task ConfirmDeleteUser(int userId, string userName, string userSurname)
+    {
+        bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm", new object[] { $"Are you sure you want to delete {userName} {userSurname}?" });
+        if (confirmed)
+        {
+            await DeleteUser(userId);
+            users = null;
+        }
+    }
+
+    private void EditUser(User user)
+    {
+        editingUserId = user.Id;
+        editName = user.Name;
+        editSurname = user.Surname;
+        editEmail = user.Email;
+        editType = user.Type.ToString();
+    }
+
+    private async Task ConfirmSaveEdit(int userId)
+    {
+        bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm", new object[] { "Are you sure you want to save changes?" });
+        if (confirmed)
+        {
+            await SaveEdit(userId);
+            users = null;
+        }
+    }
+
+
+    private async Task SaveEdit(int userId)
+    {
+        editingUserId = userId;
+        using var dbContext = DbContextFactory.CreateDbContext();
+        var userToEdit = await dbContext.Users.FindAsync(userId);
+
+        if (userToEdit != null)
+        {
+            userToEdit.Name = editName;
+            userToEdit.Surname = editSurname;
+            userToEdit.Email = editEmail;
+            if (Enum.TryParse(editType, out UserType userType))
+            {
+                userToEdit.Type = userType;
+            }
+
+            await dbContext.SaveChangesAsync();
+            users = await dbContext.Users.ToListAsync();
+            editingUserId = null;
+        }
+    }
+
+    private async Task CancelEdit()
+    {
+        editingUserId = null;
+    }
+}

@@ -1,0 +1,33 @@
+.admin-nav-menu {
+    width: 250px;
+    background-color: #628328; /* Background color for the admin menu */
+    height: 100vh; /* Full height */
+    position: sticky; /* Sticks to the top */
+    top: 0;
+    padding: 20px; /* Padding inside the menu */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+.admin-nav-menu ul {
+    list-style-type: none; /* Remove bullet points */
+    padding: 0; /* Remove default padding */
+}
+
+.admin-nav-menu li {
+    margin-bottom: 15px; /* Space between menu items */
+}
+
+.admin-nav-menu a {
+    color: #F6FCDF; /* Link color */
+    text-decoration: none; /* Remove underline */
+    font-size: 1.1em; /* Font size */
+    display: block; /* Make the link fill the list item */
+    padding: 10px; /* Padding inside the link */
+    border-radius: 5px; /* Rounded corners */
+    transition: background-color 0.3s, color 0.3s; /* Smooth transition for hover effects */
+}
+
+.admin-nav-menu a:hover {
+    background-color: #c2c5aa; /* Background color on hover */
+    color: #669933; /* Text color on hover */
+}
