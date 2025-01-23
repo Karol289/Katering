@@ -9,25 +9,40 @@
 <button @onclick="SearchMealsById">Search</button>
 @if (meals != null && meals.Any())
 {
+    <div style="display: flex; align-items: center; font-weight: bold;">
+        <span style="width: 100px;">ID</span>
+        <span style="width: 200px;">Name</span>
+        <span style="width: 100px;">Calories</span>
+        <span style="width: 100px;">Price</span>
+        <span style="width: 200px;">Description</span>
+        <span style="width: 150px;">Actions</span>
+    </div>
     <ul>
         @foreach (var meal in meals)
         {
-            <li>@meal.MealId @meal.Name @meal.Calories @meal.Price @meal.Description</li>
-            <button @onclick="() => EditMeal(meal)">Edit</button>
-
-            @if (editingMealId == meal.MealId)
-            {
-                <input type="text" @bind="editName" placeholder="@meal.Name" />
-                <input type="number" @bind="editCalories" placeholder="@meal.Calories" />
-                <input type="number" @bind="editPrice" placeholder="@meal.Price" />
-                <input type="text" @bind="editDiet" placeholder="@meal.Diet?.DietId" />
-                <input type="text" @bind="editMealCategory" placeholder="@meal.MealCategory?.MealCategoryId" />
-                <input type="text" @bind="editDescription" placeholder="@meal.Description" />
-                <button @onclick="() => ConfirmSaveEdit(meal.MealId)">Save</button>
-                <button @onclick="CancelEdit">Cancel</button>
-            }
-
-            <button @onclick="() => ConfirmDeleteMeal(meal.MealId, meal.Name)">Delete</button>
+            <li style="text-align: left;">
+                <div style="display: flex; align-items: center;">
+                    @if (editingMealId == meal.MealId)
+                    {
+                        <input type="text" @bind="editName" placeholder="@meal.Name" style="width: 200px;" />
+                        <input type="number" @bind="editCalories" placeholder="@meal.Calories" style="width: 100px;" />
+                        <input type="number" @bind="editPrice" placeholder="@meal.Price" style="width: 100px;" />
+                        <input type="text" @bind="editDescription" placeholder="@meal.Description" style="width: 200px;" />
+                        <button @onclick="() => ConfirmSaveEdit(meal.MealId)" style="margin-left: 10px;">Save</button>
+                        <button @onclick="CancelEdit" style="margin-left: 10px;">Cancel</button>
+                    }
+                    else
+                    {
+                        <span style="width: 100px;">@meal.MealId</span>
+                        <span style="width: 200px;">@meal.Name</span>
+                        <span style="width: 100px;">@meal.Calories</span>
+                        <span style="width: 100px;">@meal.Price</span>
+                        <span style="width: 200px;">@meal.Description</span>
+                        <button @onclick="() => EditMeal(meal)" style="margin-left: 10px;">Edit</button>
+                        <button @onclick="() => ConfirmDeleteMeal(meal.MealId, meal.Name)" style="margin-left: 10px;">Delete</button>
+                    }
+                </div>
+            </li>
         }
     </ul>
 }

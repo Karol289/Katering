@@ -1,15 +1,24 @@
 ﻿@page "/admin-dashboard"
 
-<div>
+<div class="admin-nav-menu" style="text-align:center;">
     <ul style="list-style:none; padding-left:0;">
         <li style="display:inline-block; margin-right:10px;">
-            <button @onclick="() => selectedTab = Tab.Users">Manage Users</button>
+            <button class="btn-custom" @onclick="() => selectedTab = Tab.Users">Manage Users</button>
         </li>
         <li style="display:inline-block; margin-right:10px;">
-            <button @onclick="() => selectedTab = Tab.Meals">Manage Meals</button>
+            <button class="btn-custom" @onclick="() => selectedTab = Tab.Meals">Manage Meals</button>
+        </li>
+        <li style="display:inline-block; margin-right:10px;">
+            <button class="btn-custom" @onclick="() => selectedTab = Tab.Categories">Manage Categories</button>
+        </li>
+        <li style="display:inline-block; margin-right:10px;">
+            <button class="btn-custom" @onclick="() => selectedTab = Tab.Orders">Manage Orders</button>
+        </li>
+        <li style="display:inline-block; margin-right:10px;">
+            <button class="btn-custom" @onclick="() => selectedTab = Tab.Subscriptions">Manage Subscriptions</button>
         </li>
         <li style="display:inline-block;">
-            <button @onclick="() => selectedTab = Tab.Categories">Manage Categories</button>
+            <button class="btn-custom" @onclick="() => selectedTab = Tab.Ratings">Manage Ratings</button>
         </li>
     </ul>
 
@@ -19,15 +28,27 @@
     }
     else if (selectedTab == Tab.Meals)
     {
-        <AdminMealMenage />
+        <AdminMealManage />
     }
-    else
+    else if (selectedTab == Tab.Categories)
     {
-        <ManageCategories />
+        <AdminCategoryManage />
+    }
+    else if (selectedTab == Tab.Orders)
+    {
+        <AdminOrderManager />
+    }
+    else if (selectedTab == Tab.Subscriptions)
+    {
+        <AdminSubManage />
+    }
+    else if (selectedTab == Tab.Ratings)
+    {
+        <AdminRatingManage />
     }
 </div>
 
 @code {
-    private enum Tab { Users, Meals, Categories }
+    private enum Tab { Users, Meals, Categories, Orders, Subscriptions, Ratings }
     private Tab selectedTab = Tab.Users;
 }

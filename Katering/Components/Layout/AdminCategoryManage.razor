@@ -1,35 +1,40 @@
 @using Microsoft.EntityFrameworkCore
 @using Katering.Entities
-@using Katering.Data.Users
 @using Katering.Data.Food
 @inject IDbContextFactory<KateringDbContext> DbContextFactory
 @inject IJSRuntime JSRuntime
 
-<h2>Manage Users</h2>
-<input type="text" @bind="searchTerm" placeholder="Search users by ID" />
-<button @onclick="SearchUsersById">Search</button>
-@if (users != null && users.Any())
+<h2>Manage Categories</h2>
+<input type="text" @bind="searchTerm" placeholder="Search categories by ID" />
+<button @onclick="SearchCategoriesById">Search</button>
+@if (categories != null && categories.Any())
 {
+    <div style="display: flex; align-items: center; font-weight: bold;">
+        <span style="width: 100px;">ID</span>
+        <span style="width: 300px;">Name</span>
+        <span style="width: 150px;">Actions</span>
+    </div>
     <ul>
-        @foreach (var user in users)
+        @foreach (var category in categories)
         {
-            <li>@user.Id @user.Name @user.Surname @user.Email @user.Type</li>
-            <button @onclick="() => EditUser(user)">Edit</button>
-
-            @if (editingUserId == user.Id)
-            {
-                <input type="text" @bind="editName" placeholder="@user.Name" />
-                <input type="text" @bind="editSurname" placeholder="@user.Surname" />
-                <input type="email" @bind="editEmail" placeholder="@user.Email" />
-                <input type="type" @bind="editType" placeholder="@user.Type" />
-                <button @onclick="() => ConfirmSaveEdit(user.Id)">Save</button>
-                <button @onclick="CancelEdit">Cancel</button>
-            }
-
-            @if (user.Type != UserType.ADMIN)
-            {
-                <button @onclick="() => ConfirmDeleteUser(user.Id, user.Name, user.Surname)">Delete</button>
-            }
+            <li style="text-align: left;">
+                <div style="display: flex; align-items: center;">
+                    @if (editingCategoryId == category.MealCategoryId)
+                    {
+                        <span style="width: 100px;">@category.MealCategoryId</span>
+                        <input type="text" @bind="editName" placeholder="@category.Name" style="width: 300px;" />
+                        <button @onclick="() => ConfirmSaveEdit(category.MealCategoryId)" style="margin-left: 10px;">Save</button>
+                        <button @onclick="CancelEdit" style="margin-left: 10px;">Cancel</button>
+                    }
+                    else
+                    {
+                        <span style="width: 100px;">@category.MealCategoryId</span>
+                        <span style="width: 300px;">@category.Name</span>
+                        <button @onclick="() => EditCategory(category)" style="margin-left: 10px;">Edit</button>
+                        <button @onclick="() => ConfirmDeleteCategory(category.MealCategoryId, category.Name)" style="margin-left: 10px;">Delete</button>
+                    }
+                </div>
+            </li>
         }
     </ul>
 }
@@ -38,99 +43,84 @@ else
     <p>Enter correct Search value</p>
 }
 
-
 @code {
     private string searchTerm;
-    private List<User> users = null;
-    private List<Meal> meals = null;
-    private int? editingUserId = null;
-    private string editName = null;
-    private string editSurname = null;
-    private string editEmail = null;
-    private string editType= null;
+    private List<MealCategory> categories = new List<MealCategory>();
+    private int? editingCategoryId = null;
+    private string editName = string.Empty;
 
-    private async Task SearchUsersById()
+    private async Task SearchCategoriesById()
     {
         using var dbContext = DbContextFactory.CreateDbContext();
-        if (int.TryParse(searchTerm, out int userId))
+        if (int.TryParse(searchTerm, out int categoryId))
         {
-            users = await dbContext.Users
-            .Where(u => u.Id == userId)
+            categories = await dbContext.MealCategories
+            .Where(c => c.MealCategoryId == categoryId)
             .ToListAsync();
         }
         else
         {
-            users = await dbContext.Users.ToListAsync();
+            categories = await dbContext.MealCategories.ToListAsync();
         }
     }
 
-    private async Task DeleteUser(int userId)
+    private async Task DeleteCategory(int categoryId)
     {
         using var dbContext = DbContextFactory.CreateDbContext();
-        var userToDelete = await dbContext.Users.FindAsync(userId);
+        var categoryToDelete = await dbContext.MealCategories.FindAsync(categoryId);
 
-        if (userToDelete != null)
+        if (categoryToDelete != null)
         {
-            dbContext.Users.Remove(userToDelete);
+            dbContext.MealCategories.Remove(categoryToDelete);
             await dbContext.SaveChangesAsync();
-            users = await dbContext.Users.ToListAsync();
+            categories = await dbContext.MealCategories.ToListAsync();
         }
     }
 
-    private async Task ConfirmDeleteUser(int userId, string userName, string userSurname)
+    private async Task ConfirmDeleteCategory(int categoryId, string categoryName)
     {
-        bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm", new object[] { $"Are you sure you want to delete {userName} {userSurname}?" });
+        bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm", new object[] { $"Are you sure you want to delete {categoryName}?" });
         if (confirmed)
         {
-            await DeleteUser(userId);
-            users = null;
+            await DeleteCategory(categoryId);
+            categories = null;
         }
     }
 
-    private void EditUser(User user)
+    private void EditCategory(MealCategory category)
     {
-        editingUserId = user.Id;
-        editName = user.Name;
-        editSurname = user.Surname;
-        editEmail = user.Email;
-        editType = user.Type.ToString();
+        editingCategoryId = category.MealCategoryId;
+        editName = category.Name ?? string.Empty;
     }
 
-    private async Task ConfirmSaveEdit(int userId)
+    private async Task ConfirmSaveEdit(int categoryId)
     {
         bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm", new object[] { "Are you sure you want to save changes?" });
         if (confirmed)
         {
-            await SaveEdit(userId);
-            users = null;
+            await SaveEdit(categoryId);
+            categories = null;
         }
     }
 
-
-    private async Task SaveEdit(int userId)
+    private async Task SaveEdit(int categoryId)
     {
-        editingUserId = userId;
+        editingCategoryId = categoryId;
         using var dbContext = DbContextFactory.CreateDbContext();
-        var userToEdit = await dbContext.Users.FindAsync(userId);
+        var categoryToEdit = await dbContext.MealCategories.FindAsync(categoryId);
 
-        if (userToEdit != null)
+        if (categoryToEdit != null)
         {
-            userToEdit.Name = editName;
-            userToEdit.Surname = editSurname;
-            userToEdit.Email = editEmail;
-            if (Enum.TryParse(editType, out UserType userType))
-            {
-                userToEdit.Type = userType;
-            }
+            categoryToEdit.Name = editName;
 
             await dbContext.SaveChangesAsync();
-            users = await dbContext.Users.ToListAsync();
-            editingUserId = null;
+            categories = await dbContext.MealCategories.ToListAsync();
+            editingCategoryId = null;
         }
     }
 
-    private async Task CancelEdit()
+    private void CancelEdit()
     {
-        editingUserId = null;
+        editingCategoryId = null;
     }
 }

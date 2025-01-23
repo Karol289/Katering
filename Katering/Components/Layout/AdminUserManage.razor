@@ -10,26 +10,41 @@
 <button @onclick="SearchUsersById">Search</button>
 @if (users != null && users.Any())
 {
+    <div style="display: flex; align-items: center; font-weight: bold;">
+        <span style="width: 100px;">Name</span>
+        <span style="width: 100px;">Surname</span>
+        <span style="width: 300px;">Email</span>
+        <span style="width: 150px;">Type</span>
+        <span style="width: 150px;">Actions</span>
+    </div>
     <ul>
         @foreach (var user in users)
         {
-            <li>@user.Id @user.Name @user.Surname @user.Email @user.Type</li>
-            <button @onclick="() => EditUser(user)">Edit</button>
-
-            @if (editingUserId == user.Id)
-            {
-                <input type="text" @bind="editName" placeholder="@user.Name" />
-                <input type="text" @bind="editSurname" placeholder="@user.Surname" />
-                <input type="email" @bind="editEmail" placeholder="@user.Email" />
-                <input type="type" @bind="editType" placeholder="@user.Type" />
-                <button @onclick="() => ConfirmSaveEdit(user.Id)">Save</button>
-                <button @onclick="CancelEdit">Cancel</button>
-            }
-
-            @if (user.Type != UserType.ADMIN)
-            {
-                <button @onclick="() => ConfirmDeleteUser(user.Id, user.Name, user.Surname)">Delete</button>
-            }
+            <li style="text-align: left;">
+                <div style="display: flex; align-items: center;">
+                    @if (editingUserId == user.Id)
+                    {
+                        <input type="text" @bind="editName" placeholder="@user.Name" style="width: 100px;" />
+                        <input type="text" @bind="editSurname" placeholder="@user.Surname" style="width: 100px;" />
+                        <input type="email" @bind="editEmail" placeholder="@user.Email" style="width: 300px;" />
+                        <input type="type" @bind="editType" placeholder="@user.Type" style="width: 150px;" />
+                        <button @onclick="() => ConfirmSaveEdit(user.Id)" style="margin-left: 10px;">Save</button>
+                        <button class="btn-delete" @onclick="CancelEdit" style="margin-left: 10px;">Cancel</button>
+                    }
+                    else
+                    {
+                        <span style="width: 100px;">@user.Name</span>
+                        <span style="width: 100px;">@user.Surname</span>
+                        <span style="width: 300px;">@user.Email</span>
+                        <span style="width: 150px;">@user.Type</span>
+                        @if (user.Type != UserType.ADMIN)
+                        {
+                            <button @onclick="() => ConfirmDeleteUser(user.Id, user.Name, user.Surname)" style="margin-left: 10px;">Delete</button>
+                            <button @onclick="() => EditUser(user)" style="margin-left: 10px;">Edit</button>
+                        }
+                    }
+                </div>
+            </li>
         }
     </ul>
 }
@@ -37,7 +52,6 @@ else
 {
     <p>Enter correct Search value</p>
 }
-
 
 @code {
     private string searchTerm;

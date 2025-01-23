@@ -1,0 +1,153 @@
+@using Microsoft.EntityFrameworkCore
+@using Katering.Entities
+@using Katering.Data.Orders
+@using Katering.Data.Users
+@inject IDbContextFactory<KateringDbContext> DbContextFactory
+@inject IJSRuntime JSRuntime
+
+<h2>Manage Orders</h2>
+<input type="text" @bind="searchTerm" placeholder="Search orders by ID" />
+<button @onclick="SearchOrdersById">Search</button>
+@if (orders != null && orders.Any())
+{
+    <div style="display: flex; align-items: center; font-weight: bold;">
+        <span style="width: 100px;">Order ID</span>
+        <span style="width: 200px;">User</span>
+        <span style="width: 150px;">Status</span>
+        <span style="width: 200px;">Date</span>
+        <span style="width: 100px;">Discount</span>
+        <span style="width: 150px;">Actions</span>
+    </div>
+    <ul>
+        @foreach (var order in orders)
+        {
+            <li style="text-align: left;">
+                <div style="display: flex; align-items: center;">
+                    @if (editingOrderId == order.OrderID)
+                    {
+                        <input type="text" @bind="editUser" placeholder="@order.User?.Name" style="width: 200px;" />
+                        <input type="text" @bind="editStatus" placeholder="@order.Status" style="width: 150px;" />
+                        <input type="datetime-local" @bind="editDate" placeholder="@order.Date" style="width: 200px;" />
+                        <input type="number" @bind="editDiscount" placeholder="@order.Discount" style="width: 100px;" />
+                        <button @onclick="() => ConfirmSaveEdit(order.OrderID)" style="margin-left: 10px;">Save</button>
+                        <button @onclick="CancelEdit" style="margin-left: 10px;">Cancel</button>
+                    }
+                    else
+                    {
+                        <span style="width: 100px;">@order.OrderID</span>
+                        <span style="width: 200px;">@order.User?.Name</span>
+                        <span style="width: 150px;">@order.Status</span>
+                        <span style="width: 200px;">@order.Date</span>
+                        <span style="width: 100px;">@order.Discount</span>
+                        <button @onclick="() => EditOrder(order)" style="margin-left: 10px;">Edit</button>
+                        <button @onclick="() => ConfirmDeleteOrder(order.OrderID)" style="margin-left: 10px;">Delete</button>
+                    }
+                </div>
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p>Enter correct Search value</p>
+}
+
+@code {
+    private string searchTerm;
+    private List<Order> orders = new List<Order>();
+    private int? editingOrderId = null;
+    private string editUser = string.Empty;
+    private string editStatus = string.Empty;
+    private DateTime? editDate = null;
+    private double? editDiscount = null;
+
+    private async Task SearchOrdersById()
+    {
+        using var dbContext = DbContextFactory.CreateDbContext();
+        if (int.TryParse(searchTerm, out int orderId))
+        {
+            orders = await dbContext.Orders
+            .Include(o => o.User)
+            .Where(o => o.OrderID == orderId)
+            .ToListAsync();
+        }
+        else
+        {
+            orders = await dbContext.Orders
+            .Include(o => o.User)
+            .ToListAsync();
+        }
+    }
+
+    private async Task DeleteOrder(int orderId)
+    {
+        using var dbContext = DbContextFactory.CreateDbContext();
+        var orderToDelete = await dbContext.Orders.FindAsync(orderId);
+
+        if (orderToDelete != null)
+        {
+            dbContext.Orders.Remove(orderToDelete);
+            await dbContext.SaveChangesAsync();
+            orders = await dbContext.Orders
+            .Include(o => o.User)
+            .ToListAsync();
+        }
+    }
+
+    private async Task ConfirmDeleteOrder(int orderId)
+    {
+        bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm", new object[] { $"Are you sure you want to delete order {orderId}?" });
+        if (confirmed)
+        {
+            await DeleteOrder(orderId);
+            orders = null;
+        }
+    }
+
+    private void EditOrder(Order order)
+    {
+        editingOrderId = order.OrderID;
+        editUser = order.User?.Name ?? string.Empty;
+        editStatus = order.Status.ToString();
+        editDate = order.Date;
+        editDiscount = order.Discount;
+    }
+
+    private async Task ConfirmSaveEdit(int orderId)
+    {
+        bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm", new object[] { "Are you sure you want to save changes?" });
+        if (confirmed)
+        {
+            await SaveEdit(orderId);
+            orders = null;
+        }
+    }
+
+    private async Task SaveEdit(int orderId)
+    {
+        editingOrderId = orderId;
+        using var dbContext = DbContextFactory.CreateDbContext();
+        var orderToEdit = await dbContext.Orders.FindAsync(orderId);
+
+        if (orderToEdit != null)
+        {
+            if (Enum.TryParse(editStatus, out Order.OrderStatus status))
+            {
+                orderToEdit.Status = status;
+            }
+            orderToEdit.Date = editDate;
+            orderToEdit.Discount = editDiscount;
+
+            await dbContext.SaveChangesAsync();
+            orders = await dbContext.Orders
+            .Include(o => o.User)
+            .ToListAsync();
+            editingOrderId = null;
+        }
+    }
+
+    private void CancelEdit()
+    {
+        editingOrderId = null;
+    }
+}

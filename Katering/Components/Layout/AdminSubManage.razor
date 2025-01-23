@@ -1,0 +1,143 @@
+@using Microsoft.EntityFrameworkCore
+@using Katering.Entities
+@using Katering.Data.Food
+@inject IDbContextFactory<KateringDbContext> DbContextFactory
+@inject IJSRuntime JSRuntime
+
+<h2>Manage Subscriptions</h2>
+<input type="text" @bind="searchTerm" placeholder="Search subscriptions by ID" />
+<button @onclick="SearchSubscriptionsById">Search</button>
+@if (subscriptions != null && subscriptions.Any())
+{
+    <div style="display: flex; align-items: center; font-weight: bold;">
+        <span style="width: 100px;">ID</span>
+        <span style="width: 200px;">Name</span>
+        <span style="width: 100px;">Price</span>
+        <span style="width: 200px;">Diet</span>
+        <span style="width: 150px;">Actions</span>
+    </div>
+    <ul>
+        @foreach (var subscription in subscriptions)
+        {
+            <li style="text-align: left;">
+                <div style="display: flex; align-items: center;">
+                    @if (editingSubscriptionId == subscription.SubscriptionID)
+                    {
+                        <input type="text" @bind="editName" placeholder="@subscription.Name" style="width: 200px;" />
+                        <input type="number" @bind="editPrice" placeholder="@subscription.Price" style="width: 100px;" />
+                        <input type="text" @bind="editDiet" placeholder="@subscription.Diet?.Name" style="width: 200px;" />
+                        <button @onclick="() => ConfirmSaveEdit(subscription.SubscriptionID)" style="margin-left: 10px;">Save</button>
+                        <button @onclick="CancelEdit" style="margin-left: 10px;">Cancel</button>
+                    }
+                    else
+                    {
+                        <span style="width: 100px;">@subscription.SubscriptionID</span>
+                        <span style="width: 200px;">@subscription.Name</span>
+                        <span style="width: 100px;">@subscription.Price</span>
+                        <span style="width: 200px;">@subscription.Diet?.Name</span>
+                        <button @onclick="() => ConfirmDeleteSubscription(subscription.SubscriptionID, subscription.Name)" style="margin-left: 10px;">Delete</button>
+                        <button @onclick="() => EditSubscription(subscription)" style="margin-left: 10px;">Edit</button>
+                    }
+                </div>
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p>Enter correct Search value</p>
+}
+
+@code {
+    private string searchTerm;
+    private List<Subscription> subscriptions = null;
+    private int? editingSubscriptionId = null;
+    private string editName = null;
+    private double? editPrice = null;
+    private string editDiet = null;
+
+    private async Task SearchSubscriptionsById()
+    {
+        using var dbContext = DbContextFactory.CreateDbContext();
+        if (int.TryParse(searchTerm, out int subscriptionId))
+        {
+            subscriptions = await dbContext.Subscriptions
+            .Where(s => s.SubscriptionID == subscriptionId)
+            .Include(s => s.Diet)
+            .ToListAsync();
+        }
+        else
+        {
+            subscriptions = await dbContext.Subscriptions.Include(s => s.Diet).ToListAsync();
+        }
+    }
+
+    private async Task DeleteSubscription(int subscriptionId)
+    {
+        using var dbContext = DbContextFactory.CreateDbContext();
+        var subscriptionToDelete = await dbContext.Subscriptions.FindAsync(subscriptionId);
+
+        if (subscriptionToDelete != null)
+        {
+            dbContext.Subscriptions.Remove(subscriptionToDelete);
+            await dbContext.SaveChangesAsync();
+            subscriptions = await dbContext.Subscriptions.Include(s => s.Diet).ToListAsync();
+        }
+    }
+
+    private async Task ConfirmDeleteSubscription(int subscriptionId, string subscriptionName)
+    {
+        bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm", new object[] { $"Are you sure you want to delete {subscriptionName}?" });
+        if (confirmed)
+        {
+            await DeleteSubscription(subscriptionId);
+            subscriptions = null;
+        }
+    }
+
+    private void EditSubscription(Subscription subscription)
+    {
+        editingSubscriptionId = subscription.SubscriptionID;
+        editName = subscription.Name;
+        editPrice = subscription.Price;
+        editDiet = subscription.Diet?.Name;
+    }
+
+    private async Task ConfirmSaveEdit(int subscriptionId)
+    {
+        bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm", new object[] { "Are you sure you want to save changes?" });
+        if (confirmed)
+        {
+            await SaveEdit(subscriptionId);
+            subscriptions = null;
+        }
+    }
+
+    private async Task SaveEdit(int subscriptionId)
+    {
+        editingSubscriptionId = subscriptionId;
+        using var dbContext = DbContextFactory.CreateDbContext();
+        var subscriptionToEdit = await dbContext.Subscriptions.FindAsync(subscriptionId);
+
+        if (subscriptionToEdit != null)
+        {
+            subscriptionToEdit.Name = editName;
+            subscriptionToEdit.Price = editPrice;
+
+            if (!string.IsNullOrEmpty(editDiet))
+            {
+                var diet = await dbContext.Diets.FirstOrDefaultAsync(d => d.Name == editDiet);
+                subscriptionToEdit.Diet = diet;
+            }
+
+            await dbContext.SaveChangesAsync();
+            subscriptions = await dbContext.Subscriptions.Include(s => s.Diet).ToListAsync();
+            editingSubscriptionId = null;
+        }
+    }
+
+    private void CancelEdit()
+    {
+        editingSubscriptionId = null;
+    }
+}

@@ -1,0 +1,171 @@
+@using Microsoft.EntityFrameworkCore
+@using Katering.Entities
+@using Katering.Data.Food
+@using Katering.Data.Users
+@inject IDbContextFactory<KateringDbContext> DbContextFactory
+@inject IJSRuntime JSRuntime
+
+<h2>Manage Ratings</h2>
+<input type="text" @bind="searchTerm" placeholder="Search ratings by ID" />
+<button @onclick="SearchRatingsById">Search</button>
+@if (ratings != null && ratings.Any())
+{
+    <div style="display: flex; align-items: center; font-weight: bold;">
+        <span style="width: 100px;">Rating ID</span>
+        <span style="width: 200px;">Meal</span>
+        <span style="width: 200px;">User</span>
+        <span style="width: 100px;">Value</span>
+        <span style="width: 200px;">Date</span>
+        <span style="width: 300px;">Content</span>
+        <span style="width: 150px;">Actions</span>
+    </div>
+    <ul>
+        @foreach (var rating in ratings)
+        {
+            <li style="text-align: left;">
+                <div style="display: flex; align-items: center;">
+                    @if (editingRatingId == rating.RatingId)
+                    {
+                        <input type="text" @bind="editMeal" placeholder="@rating.Meal?.Name" style="width: 200px;" />
+                        <input type="text" @bind="editUser" placeholder="@rating.User?.Name" style="width: 200px;" />
+                        <input type="number" @bind="editValue" placeholder="@rating.Value" style="width: 100px;" />
+                        <input type="date" @bind="editDate" placeholder="@rating.Date" style="width: 200px;" />
+                        <input type="text" @bind="editContent" placeholder="@rating.Content" style="width: 300px;" />
+                        <button @onclick="() => ConfirmSaveEdit(rating.RatingId)" style="margin-left: 10px;">Save</button>
+                        <button @onclick="CancelEdit" style="margin-left: 10px;">Cancel</button>
+                    }
+                    else
+                    {
+                        <span style="width: 100px;">@rating.RatingId</span>
+                        <span style="width: 200px;">@rating.Meal?.Name</span>
+                        <span style="width: 200px;">@rating.User?.Name</span>
+                        <span style="width: 100px;">@rating.Value</span>
+                        <span style="width: 200px;">@rating.Date</span>
+                        <span style="width: 300px;">@rating.Content</span>
+                        <button @onclick="() => ConfirmDeleteRating(rating.RatingId)" style="margin-left: 10px;">Delete</button>
+                        <button @onclick="() => EditRating(rating)" style="margin-left: 10px;">Edit</button>
+                    }
+                </div>
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p>Enter correct Search value</p>
+}
+
+@code {
+    private string searchTerm;
+    private List<Rating> ratings = null;
+    private int? editingRatingId = null;
+    private string editMeal = null;
+    private string editUser = null;
+    private int? editValue = null;
+    private DateTime? editDate = null;
+    private string editContent = null;
+
+    private async Task SearchRatingsById()
+    {
+        using var dbContext = DbContextFactory.CreateDbContext();
+        if (int.TryParse(searchTerm, out int ratingId))
+        {
+            ratings = await dbContext.Ratings
+            .Where(r => r.RatingId == ratingId)
+            .Include(r => r.Meal)
+            .Include(r => r.User)
+            .ToListAsync();
+        }
+        else
+        {
+            ratings = await dbContext.Ratings
+            .Include(r => r.Meal)
+            .Include(r => r.User)
+            .ToListAsync();
+        }
+    }
+
+    private async Task DeleteRating(int ratingId)
+    {
+        using var dbContext = DbContextFactory.CreateDbContext();
+        var ratingToDelete = await dbContext.Ratings.FindAsync(ratingId);
+
+        if (ratingToDelete != null)
+        {
+            dbContext.Ratings.Remove(ratingToDelete);
+            await dbContext.SaveChangesAsync();
+            ratings = await dbContext.Ratings
+            .Include(r => r.Meal)
+            .Include(r => r.User)
+            .ToListAsync();
+        }
+    }
+
+    private async Task ConfirmDeleteRating(int ratingId)
+    {
+        bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm", new object[] { $"Are you sure you want to delete rating {ratingId}?" });
+        if (confirmed)
+        {
+            await DeleteRating(ratingId);
+            ratings = null;
+        }
+    }
+
+    private void EditRating(Rating rating)
+    {
+        editingRatingId = rating.RatingId;
+        editMeal = rating.Meal?.Name;
+        editUser = rating.User?.Name;
+        editValue = rating.Value;
+        editDate = rating.Date;
+        editContent = rating.Content;
+    }
+
+    private async Task ConfirmSaveEdit(int ratingId)
+    {
+        bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm", new object[] { "Are you sure you want to save changes?" });
+        if (confirmed)
+        {
+            await SaveEdit(ratingId);
+            ratings = null;
+        }
+    }
+
+    private async Task SaveEdit(int ratingId)
+    {
+        editingRatingId = ratingId;
+        using var dbContext = DbContextFactory.CreateDbContext();
+        var ratingToEdit = await dbContext.Ratings.FindAsync(ratingId);
+
+        if (ratingToEdit != null)
+        {
+            if (!string.IsNullOrEmpty(editMeal))
+            {
+                var meal = await dbContext.Meals.FirstOrDefaultAsync(m => m.Name == editMeal);
+                ratingToEdit.Meal = meal;
+            }
+
+            if (!string.IsNullOrEmpty(editUser))
+            {
+                var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Name == editUser);
+                ratingToEdit.User = user;
+            }
+
+            ratingToEdit.Value = editValue;
+            ratingToEdit.Date = editDate;
+            ratingToEdit.Content = editContent;
+
+            await dbContext.SaveChangesAsync();
+            ratings = await dbContext.Ratings
+            .Include(r => r.Meal)
+            .Include(r => r.User)
+            .ToListAsync();
+            editingRatingId = null;
+        }
+    }
+
+    private void CancelEdit()
+    {
+        editingRatingId = null;
+    }
+}
