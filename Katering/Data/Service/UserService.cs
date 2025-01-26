@@ -19,20 +19,33 @@ namespace Katering.Data.Service
         }
         public async Task<LoginResult> Login(LoginModel loginModel)
         {
+            // Walidacja danych wejściowych
+            if (string.IsNullOrEmpty(loginModel.Login) || string.IsNullOrEmpty(loginModel.Password))
+            {
+                return LoginResult.ERROR; // Dane logowania są niekompletne
+            }
+
             using (var context = _dbContextFactory.CreateDbContext())
             {
-                var user = context.Users.Where(u => u.Email == loginModel.Login && u.Password == loginModel.Password).First();
+                var user = await context.Users.FirstOrDefaultAsync(u => u.Email == loginModel.Login);
 
                 if (user == null)
                 {
                     return LoginResult.UNKNOWN_EMAIL;
                 }
-                else
+                // Sprawdź poprawność hasła
+                if (user.Password != loginModel.Password)
                 {
-                    var userEntity = MapToEntityAsync(user, context);
-                    _sessionState.LoginUser(userEntity);
-                    return LoginResult.SUCCESS;
+                    return LoginResult.ERROR; // Hasło jest nieprawidłowe
                 }
+
+                // Mapowanie na odpowiedni typ użytkownika
+                var userEntity = MapToEntityAsync(user, context);
+
+                // Zaloguj użytkownika do sesji
+                _sessionState.LoginUser(userEntity);
+
+                return LoginResult.SUCCESS;
             }
         }
 

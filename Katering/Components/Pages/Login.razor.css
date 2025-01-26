@@ -31,6 +31,16 @@ label {
     padding-top: 10px; /* Przestrzeń między tekstem a przyciskami */
 }
 
+.error-container {
+    text-align: center; /* Wyśrodkowanie tekstu */
+}
+
+.text-danger {
+    color: red; /* Kolor tekstu dla błędów */
+    font-weight: bold; /* Pogrubiony tekst */
+    font-size: 16px; /* Rozmiar tekstu */
+}
+
 /* Styl przycisku */
 .submit-btn {
     padding: 10px 20px; /* Wewnętrzne odstępy */
@@ -47,3 +57,4 @@ label {
     .submit-btn:hover {
         background-color: #4a5e2f;
     }
+

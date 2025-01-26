@@ -9,29 +9,31 @@
 
 <h3 class="login-title">Zaloguj się</h3>
 
-<EditForm EditContext="editContext" OnValidSubmit="LoginUser" FormName="LoginName">
+<EditForm Model="Model" OnValidSubmit="LoginUser" FormName="LoginName">
     <DataAnnotationsValidator />
 
     <div class="form-group">
         <label for="login">Login:</label>
-        <br/>
+        <br />
         <InputText @bind-Value="Model.Login" id="login" />
     </div>
 
     <div class="form-group">
         <label for="password">Hasło:</label>
-        <br/>
-        <InputText @bind-Value="Model.Password" type="password" id="password"/>
+        <br />
+        <InputText @bind-Value="Model.Password" type="password" id="password" />
     </div>
     <div class="form-group">
         <button type="submit" class="submit-btn">Zaloguj się</button>
     </div>
-   
+
 </EditForm>
 
 @if (!string.IsNullOrEmpty(ErrorMessage))
 {
-    <p class="text-danger">@ErrorMessage</p>
+    <div class="error-container">
+        <p class="text-danger">@ErrorMessage</p>
+    </div>
 }
 
 @code {
@@ -41,37 +43,56 @@
 
     public LoginModel Model { get; set; } = new LoginModel();
 
-    protected override void OnInitialized()
-    {
-        editContext = new EditContext(Model);
+    protected override void OnInitialized() => Model ??= new();
 
-    }   
     private async Task LoginUser()
     {
-        var result = await UserService.Login(Model);
-        if (result == LoginResult.SUCCESS)
+        var validationErrors = Model.Validate();
+        if (validationErrors.Count > 0)
         {
-            NavigateByUserRole();
+            ErrorMessage = string.Join("\n", validationErrors);
+            return;
         }
-        else if (result == LoginResult.UNKNOWN_EMAIL)
+
+        try
         {
-            ErrorMessage = "Nieznany email, spróbuj ponownie";
+            var result = await UserService.Login(Model);
+            switch (result)
+            {
+                case LoginResult.SUCCESS:
+                    NavigateByUserRole();
+                    break;
+
+                case LoginResult.UNKNOWN_EMAIL:
+                    ErrorMessage = "Nieznany email. Sprawdź dane logowania i spróbuj ponownie.";
+                    break;
+
+                case LoginResult.ERROR:
+                    ErrorMessage = "Nieprawidłowe hasło. Spróbuj ponownie.";
+                    break;
+
+                default:
+                    ErrorMessage = "Wystąpił niespodziewany błąd przy logowaniu.";
+                    break;
+            }
         }
-        else
+        catch (Exception ex)
         {
-            ErrorMessage = "Wystąpił błąd przy logowaniu";
+            ErrorMessage = "Wystąpił niespodziewany błąd przy logowaniu.";
+            Console.WriteLine($"Login error: {ex.Message}");
         }
     }
+
     private void NavigateByUserRole()
     {
         Console.WriteLine($"User Role: Admin - {SessionState.IsAdministration()}, Moderator - {SessionState.IsModerator()}, Contractor - {SessionState.IsContractor()}, Client - {SessionState.IsClient()}");
 
         if (SessionState.IsAdministration())
-            NavigationManager.NavigateTo("/admin-dashboard");
+            NavigationManager.NavigateTo("/");
         else if (SessionState.IsModerator())
-            NavigationManager.NavigateTo("/moderator-dashboard");
+            NavigationManager.NavigateTo("/");
         else if (SessionState.IsContractor())
-            NavigationManager.NavigateTo("/contractor-dashboard");
+            NavigationManager.NavigateTo("/");
         else if (SessionState.IsClient())
             NavigationManager.NavigateTo("/");
         Console.WriteLine("No roles matched. Check SessionState implementations.");
