@@ -30,7 +30,8 @@ def pdf():
                     where o.OrderId = """ +str(opcje) + ";"  
 
         if type == "2":
-            zap =  """select u.Name as "UserName", u.Surname, u.Email ,m.Name as "MealName", m.Price, m.MealId, o.Discount, CONVERT(DATE, o.Date), o.OrderId from orders o 
+
+            zap =  """select u.Name as "UserName", u.Surname, u.Email ,m.Name as "MealName", m.Price, m.MealId, o.Discount, CONVERT(DATE, o.Date) from orders o 
                     join users u on u.Id = o.UserId 
                     join MealsOrder mo on mo.OrderId = o.OrderId 
                     join Meals m on m.MealId = mo.MealId 
@@ -41,6 +42,7 @@ def pdf():
                     join MealsOrder mo on mo.OrderId = o.OrderId 
                     join Meals m on m.MealId = mo.MealId"""
         if type == '2':
+
             zap = """SELECT mc.MealCategoryId, mc.Name as "CathegoryName", m.Name as "MealName", m.Price, mo.MealId, mo.MealOrderId
                     FROM MealCategories mc
                     join Meals m on m.MealCategoryId = mc.MealCategoryId
