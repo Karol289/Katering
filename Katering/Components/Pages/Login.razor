@@ -44,7 +44,8 @@
     protected override void OnInitialized()
     {
         editContext = new EditContext(Model);
-    }
+
+    }   
     private async Task LoginUser()
     {
         var result = await UserService.Login(Model);

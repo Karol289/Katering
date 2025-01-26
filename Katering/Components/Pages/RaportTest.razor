@@ -14,31 +14,74 @@
 
 
 <h1>Raporty PDF</h1>
-<p>
-    <button @onclick="DownloadReport">Pobierz raport</button>
-    @if (SessionState.IsClient())
-    {
-@*          <select>
-             @if(meals != null){
-             @for (var i = 0; i < meals.Count; i++)
-             {
-                 <option value="@meals[i].MealId">@meals[i].Name</option>
-             }
-             }
-         </select> *@
-        <hr/>
-        <select>
-            @if (orders != null)
-            {
-                @for (var i = 0; i < orders.Count; i++)
-                {
-                    <option value="@orders[i].OrderID">@orders[i].Date.ToString()</option>
-                }
-            }
-        </select>
 
-    }
-</p>
+@if (SessionState.IsClient())
+{
+    <select id="select1" @bind="selectedOrderId">
+        <option value="">-- Wybierz zamówienie --</option>
+        @if (orders != null)
+        {
+            @foreach (var order in orders)
+            {
+                <option value="@order.OrderID">@order.Date.ToString()</option>
+            }
+        }
+    </select>
+    <button @onclick="oneClient">Wybrany</button>
+    <br />
+    <button @onclick="allClient">All</button>
+
+}
+else if (SessionState.IsModerator() || SessionState.IsAdministration())
+{
+    <button @onclick="allOrdersMod">Raport wszytskich zamówień</button><br/>
+    <select @bind="selectedCathegoryId">
+        @if (categories != null)
+        {
+            @for (var i = 0; i < categories.Count; i++)
+            {
+                <option value="@categories[i].MealCategoryId">@categories[i].Name.ToString()</option>
+            }
+        }
+    </select>
+    <button @onclick="oneMealCategory">Raport wybranej kategorii zywieniowej</button>
+    <br />
+    <br/>
+
+    <select @bind="selectedMealId">
+        @if (meals != null)
+        {
+            @for (var i = 0; i < meals.Count; i++)
+            {
+                <option value="@meals[i].MealId">@meals[i].Name.ToString()</option>
+            }
+        }
+    </select>
+    <button @onclick="oneMeal">Raport wybranego posilku</button>
+
+
+
+}
+@if (SessionState.IsAdministration())
+{
+    <br />
+    <br />
+
+    <select @bind="podsumowanieId">
+        <option value="Kwartał">Kwartał</option>
+        <option value="Pół roku">Pół roku</option>
+        <option value="Rok">Rok</option>
+        <option value="Wszystko">Wszystko</option>
+    </select>
+
+ 
+    <button @onclick="podsumowanie">Ogolne podsumowanie</button>
+
+}
+@if (SessionState.IsContractor())
+{
+
+}
 
 @if (!string.IsNullOrEmpty(ErrorMessage))
 {
@@ -50,25 +93,72 @@
 
     private List<Meal> meals = null;
     private List<Order> orders = null;
+    private List<MealCategory> categories = null;
+
+    private int? selectedOrderId;
+    private int? selectedCathegoryId;
+    private int? selectedMealId;
+    private string? podsumowanieId;
+
 
     protected override async Task OnInitializedAsync()
     {
         // Pobierz dane z RaportService
-        meals = await Task.Run(() => RaportService.GetAllMeals());
+
         orders = await Task.Run(() => RaportService.GetAllUserOrders(SessionState.User.UserId));
+
+        meals = await Task.Run(() => RaportService.GetAllMeals());
+
+        categories = await Task.Run(() => RaportService.GetAllMealCategories());
+    }
+
+    private async Task oneClient()
+    {
+        await DownloadReport("klient", "1", selectedOrderId.ToString());
+    }
+
+    private async Task allClient()
+    {
+        await DownloadReport("klient", "2", SessionState.User.UserId.ToString());
+    }
+
+    private async Task allOrdersMod()
+    {
+        await DownloadReport("mod", "1");
+    }
+
+    private async Task oneMealCategory()
+    {
+        await DownloadReport("mod", "2", selectedCathegoryId.ToString());
+    }
+
+    private async Task oneMeal()
+    {
+        await DownloadReport("mod", "3", selectedMealId.ToString());
+    }
+
+    private async Task podsumowanie()
+    {
+        await DownloadReport("admin", "1", podsumowanieId.ToString());
     }
 
 
-    private async Task DownloadReport()
+
+
+    private async Task DownloadReport(string userType = "", string raportType = "", string opcje = "")
     {
 
-       
+
         try
         {
             string serverName = "./";
             string databaseName = "KateringDB";
 
-            string connectionString = "http://127.0.0.1:5000/pdf?server=" + serverName + "&database=" + databaseName;
+
+
+
+            string connectionString = "http://127.0.0.1:5000/pdf?server=" + serverName + "&database=" + databaseName
+            +"&user=" + userType + "&type=" + raportType + "&opcje=" + opcje;
 
 
             var response = await Http.GetAsync(connectionString);
@@ -98,7 +188,7 @@
 
 <script>
     function openPdf(pdfBytes) {
-   
+
         const byteArray = new Uint8Array(pdfBytes);
         const blob = new Blob([byteArray], { type: 'application/pdf' });
         const url = URL.createObjectURL(blob);
