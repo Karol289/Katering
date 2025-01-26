@@ -4,6 +4,7 @@ using Katering.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Katering.Migrations
 {
     [DbContext(typeof(KateringDbContext))]
-    partial class KateringDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250123170052_dane")]
+    partial class dane
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -202,11 +205,11 @@ namespace Katering.Migrations
 
             modelBuilder.Entity("Katering.Data.Orders.Payment", b =>
                 {
-                    b.Property<int>("PaymentId")
+                    b.Property<int>("PaymentID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PaymentId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PaymentID"));
 
                     b.Property<DateTime?>("Date")
                         .HasColumnType("datetime2");
@@ -220,7 +223,7 @@ namespace Katering.Migrations
                     b.Property<double>("Value")
                         .HasColumnType("float");
 
-                    b.HasKey("PaymentId");
+                    b.HasKey("PaymentID");
 
                     b.ToTable("Payments");
                 });

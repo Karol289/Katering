@@ -8,7 +8,7 @@ namespace Katering.Data.Orders
     public class Payment
     {
         [Key]
-        public int PaymentID { get; set; }
+        public int PaymentId { get; set; }
 
         public double Value { get; set; }
 
