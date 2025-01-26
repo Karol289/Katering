@@ -10,6 +10,18 @@
         public bool IsPasswordEmpty => String.IsNullOrEmpty(Password);
 
         public bool IsLoginEmpty => String.IsNullOrEmpty(Login);
+
+
+        public List<string> Validate()
+        {
+            var errors = new List<string>();
+
+            if (IsLoginEmpty)
+                errors.Add("Login jest wymagany.");
+            if (IsPasswordEmpty)
+                errors.Add("Hasło jest wymagane.");
+            return errors;
+        }
     }
 }
 public enum LoginResult
