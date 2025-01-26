@@ -4,6 +4,7 @@ using Katering.Entities;
 using Katering.Data.Service;
 using Microsoft.EntityFrameworkCore;
 using Katering.Data.SessionState;
+using Katering.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +32,8 @@ builder.Services.AddScoped<Katering.Data.Service.UserService>();
 builder.Services.AddSingleton<RegistrationService>();
 
 builder.Services.AddScoped<RaportService>();
+
+builder.Services.AddScoped<CartService>();
 
 // Klient HTTP do API raportow
 builder.Services.AddHttpClient();

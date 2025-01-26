@@ -1,0 +1,170 @@
+﻿@page "/ratings"
+@using Microsoft.EntityFrameworkCore
+@using Katering.Entities
+@using Katering.Data.Food
+@using Katering.Data.Users
+@inject IDbContextFactory<KateringDbContext> DbContextFactory
+@using Katering.Data.SessionState
+@inject SessionState SessionState
+@inject Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider AuthenticationStateProvider
+
+<div class="ratings-container">
+    <h1 class="page-title">Client Ratings</h1>
+
+    <div class="ratings-content">
+        <!-- Left Side (Table) -->
+        <div class="table-container">
+            <table class="table-responsive">
+                <thead>
+                    <tr>
+                        <th>Meal</th>
+                        <th>User</th>
+                        <th>Rating</th>
+                        <th>Comment</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var rating in ratings)
+                    {
+                        <tr>
+                            <td>@(rating.Meal?.Name ?? "No Meal")</td>
+                            <td>@(rating.User?.Name ?? "No User")</td>
+                            <td>@rating.Value</td>
+                            <td>@rating.Content</td>
+                            <td>
+                                <button class="action-btn delete-btn" @onclick="@(() => DeleteRating(rating.RatingId))">Delete</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Right Side (Add Rating Form) -->
+        <div id="add-rating" class="add-rating-form">
+            <select @bind="newMeal.MealId" class="custom-select">
+                <option value="">Select Meal</option>
+                @foreach (var meal in meals)
+                {
+                    <option value="@meal.MealId">@meal.Name</option>
+                }
+            </select>
+
+            <div class="input-group">
+                <input @bind="newRating.Value" class="input-field" placeholder="Rating (1-5)" type="number" min="1" max="5" />
+                <input @bind="newRating.Content" class="input-field" placeholder="Comment" />
+            </div>
+
+            <button class="action-btn add-btn" @onclick="AddRating">Add Rating</button>
+        </div>
+    </div>
+
+    <p class="info-message" id="message">@Message</p>
+</div>
+
+@code {
+    private List<Rating> ratings = new();
+    private List<Meal> meals = new();
+    private List<User> users = new();
+    private Meal newMeal = new();
+    private Rating newRating = new();
+    private string Message = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        try
+        {
+            // Use a single DbContext instance for all queries
+            using var dbContext = DbContextFactory.CreateDbContext();
+
+            // Load ratings with related meal and user data
+            ratings = await dbContext.Ratings
+                .Include(r => r.Meal)  // Include the related Meal
+                .Include(r => r.User)  // Include the related User
+                .ToListAsync();
+
+            // Load meals with related MealCategory and Diet data
+            meals = await dbContext.Meals
+                .Include(m => m.MealCategory)  // Include MealCategory
+                .Include(m => m.Diet)  // Include Diet
+                .ToListAsync();
+
+            // Load users data
+            users = await dbContext.Users.ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            // If something goes wrong, set the error message
+            Message = $"Error loading data: {ex.Message}";
+        }
+    }
+
+
+    private async Task AddRating()
+    {
+        if (newRating.Value is < 1 or > 5)
+        {
+            Message = "Rating value must be between 1 and 5.";
+            return;
+        }
+
+        try
+        {
+            var meal = meals.FirstOrDefault(m => m.MealId == newMeal.MealId);
+            if (meal == null)
+            {
+                Message = "Invalid meal.";
+                return;
+            }
+
+            var user = users.FirstOrDefault(u => u.Id == SessionState.User.UserId);
+            if (user == null)
+            {
+                Message = "Invalid user.";
+                return;
+            }
+
+            newRating.RatingId = ratings.Any() ? ratings.Last().RatingId + 1 : 1;
+            newRating.Meal = meal;
+            newRating.User = user;
+
+            using var dbContext = DbContextFactory.CreateDbContext();
+            dbContext.Ratings.Add(newRating);
+            await dbContext.SaveChangesAsync();
+
+            Message = "Rating added successfully!";
+            newRating = new Rating(); // Clear form fields
+            await LoadData(); // Reload ratings data
+        }
+        catch (Exception ex)
+        {
+            Message = $"Error: {ex.Message}";
+        }
+    }
+
+    private async Task DeleteRating(int ratingId)
+    {
+        try
+        {
+            using var dbContext = DbContextFactory.CreateDbContext();
+            var rating = await dbContext.Ratings.FindAsync(ratingId);
+
+            if (rating != null)
+            {
+                dbContext.Ratings.Remove(rating);
+                await dbContext.SaveChangesAsync();
+                await LoadData(); // Reload ratings after deleting
+            }
+        }
+        catch (Exception ex)
+        {
+            Message = $"Error: {ex.Message}";
+        }
+    }
+}

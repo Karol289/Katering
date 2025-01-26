@@ -1,0 +1,142 @@
+﻿/* Base styling for container */
+.ratings-container {
+    width: 90%;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Page title */
+.page-title {
+    font-size: 2.5rem;
+    text-align: center;
+    color: #4b4b4b;
+    margin-bottom: 30px;
+    font-weight: bold;
+}
+
+/* Ratings content layout with flexbox (left & right side) */
+.ratings-content {
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+/* Left Side Table Styles - Take up larger space */
+.table-container {
+    flex: 2; /* Take up more space on the left */
+    min-width: 60%; /* Slightly larger than the right side */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.table-responsive {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: auto;
+}
+
+    .table-responsive th,
+    .table-responsive td {
+        padding: 12px 20px;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+    }
+
+    .table-responsive th {
+        background-color: #4caf50;
+        color: white;
+        text-transform: uppercase;
+        font-size: 1rem;
+    }
+
+    .table-responsive tr:nth-child(even) {
+        background-color: #fafafa;
+    }
+
+    .table-responsive tr:hover {
+        background-color: #f1f1f1;
+    }
+
+/* Right Side Add Rating Form - Take up smaller space */
+.add-rating-form {
+    flex: 1; /* Take up less space on the right */
+    min-width: 35%; /* Smaller size */
+    padding: 20px;
+    background-color: #f4f7f6;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.custom-select,
+.input-field {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+}
+
+    .custom-select:focus,
+    .input-field:focus {
+        border-color: #4caf50;
+    }
+
+/* Button Styles */
+.action-btn {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    font-size: 1rem;
+    width: 100%;
+}
+
+.add-btn {
+    background-color: #4caf50;
+}
+
+.delete-btn {
+    background-color: #f44336;
+}
+
+.action-btn:hover {
+    opacity: 0.9;
+}
+
+/* Info and error message */
+.info-message {
+    margin-top: 30px;
+    padding: 15px;
+    background-color: #e7f7e7;
+    color: #4caf50;
+    text-align: center;
+    font-size: 1rem;
+}
+
+.error-message {
+    margin-top: 30px;
+    padding: 15px;
+    background-color: #fddede;
+    color: #d9534f;
+    text-align: center;
+    font-size: 1rem;
+}
+
+/* Responsive layout adjustments */
+@media (max-width: 768px) {
+    .ratings-content {
+        flex-direction: column; /* Stack left and right sections on small screens */
+    }
+
+    .table-container, .add-rating-form {
+        min-width: 100%;
+        flex: 1 1 auto;
+    }
+
+    .page-title {
+        font-size: 2rem; /* Smaller title for smaller screens */
+    }
+}

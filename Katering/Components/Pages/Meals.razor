@@ -1,0 +1,90 @@
+﻿@page "/meals"
+@using Katering.Services
+@using Microsoft.EntityFrameworkCore
+@using Katering.Entities
+@using Katering.Data.Food
+@inject IDbContextFactory<KateringDbContext> DbContextFactory
+@inject CartService CartService// Inject CartService
+
+<h3 class="meals-title">Menu</h3>
+
+@if (IsLoading)
+{
+    <p class="info-message">Ładowanie Posiłków...</p>
+}
+else if (ErrorMessage != null)
+{
+    <p class="error-message">@ErrorMessage</p>
+}
+else if (meals.Count == 0)
+{
+    <p class="info-message">Brak posiłków dostępnych.</p>
+}
+else
+{
+    <div class="table-container">
+        <table class="responsive-table">
+            <thead>
+                <tr>
+                    <th>Nazwa</th>
+                    <th>Kategoria</th>
+                    <th>Kalorie</th>
+                    <th>Cena</th>
+                    <th>Opis</th>
+                    <th>Zamów</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var meal in meals)
+                {
+                    <tr>
+                        <td>@meal.Name</td>
+                        <td>@meal.MealCategory?.Name</td>
+                        <td>@meal.Calories</td>
+                        <td>@meal.Price.ToString()</td>
+                        <td>@meal.Description</td>
+                        <td><button @onclick="() => AddToCart(meal.MealId)" class="add-to-cart-btn">Dodaj do koszyka</button></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@code {
+    public List<Meal> meals { get; private set; } = new List<Meal>();
+    public bool IsLoading { get; private set; } = true;
+    public string ErrorMessage { get; private set; }
+
+    public async Task LoadMealsAsync()
+    {
+        try
+        {
+            using var dbContext = DbContextFactory.CreateDbContext();
+            meals = await dbContext.Meals
+                .Include(m => m.MealCategory)
+                .Include(m => m.Diet)
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Failed to load meals: {ex.Message}";
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadMealsAsync();
+    }
+
+    // Add the meal ID to the cart
+    private void AddToCart(int mealId)
+    {
+        CartService.AddToCart(mealId);  // Add the item using the CartService
+        Console.WriteLine($"Meal {mealId} added to the cart.");
+    }
+}

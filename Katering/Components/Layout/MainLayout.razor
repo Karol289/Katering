@@ -2,6 +2,8 @@
 @using Katering.Data.SessionState
 @inject SessionState SessionState
 @inject NavigationManager NavigationManager
+@using Katering.Services
+@inject CartService CartService
 
 <div class="page">
     <div class="main-layout">   
@@ -15,8 +17,8 @@
                     <div class="center-links">
                         <a class="btn-cust mx-3" href="/">Strona główna</a>
                         <a class="btn-cust mx-3" href="/meals">Menu</a>
-                        <a class="btn-cust mx-3" href="/cart">Opinie klientów</a>
-                        <a class="btn-cust mx-3" href="/cart">Koszyk</a>
+                        <a class="btn-cust mx-3" href="/ratings">Opinie klientów</a>
+                        <a class="btn-cust mx-3" href="/cart" @onclick="NavigateToCart">Koszyk</a>
                         <a class="btn-cust mx-3" href="/raports">Raporty</a>
                     </div>
 
@@ -71,5 +73,10 @@
     {
         SessionState.LogoutUser();
         NavigationManager.NavigateTo("/login", true);
+    }
+
+    private void NavigateToCart()
+    {
+        CartService.NavigateToCart();  // Use CartService to handle navigation
     }
 }

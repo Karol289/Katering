@@ -1,0 +1,86 @@
+﻿
+/* Title at the top */
+.meals-title {
+    font-size: 4vw; /* Proportional font size */
+    text-align: center;
+    margin-bottom: 50px;
+    color: white;
+}
+
+/* Center the table and make it responsive */
+.responsive-table {
+    width: 80%;
+    margin: 0 auto;
+    border-collapse: collapse;
+    table-layout: auto;
+    border: 1px solid #ddd; /* Add border around table */
+}
+
+    /* Table Header Styling */
+    .responsive-table th, .responsive-table td {
+        padding: 10px;
+        text-align: left;
+    }
+
+    .responsive-table th {
+        background-color: #628328;
+        color: white;
+        position: sticky; /* Make headers stick when scrolling */
+        top: 0; /* Position at the top of the table */
+        z-index: 2;
+    }
+
+    /* All rows will have white background */
+    .responsive-table tr {
+        background-color: white;
+    }
+
+        /* Remove hover effect */
+        .responsive-table tr:hover {
+            background-color: white;
+        }
+
+/* Table Body Scroll */
+.table-container {
+    height: 400px; /* Fixed height */
+    overflow-y: auto; /* Enables scrolling if the content exceeds the fixed height */
+}
+
+/* Button styling */
+.add-to-cart-btn {
+    padding: 10px 20px;
+    background-color: #628328;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+    .add-to-cart-btn:hover {
+        background-color: #4a5e2f;
+    }
+
+/* Error and Info Message Styling */
+.info-message, .error-message {
+    text-align: center;
+    font-size: 1.5rem;
+    color: #444;
+    padding: 15px;
+}
+
+.info-message {
+    background-color: #f9f9f9;
+}
+
+.error-message {
+    background-color: #f2dede;
+    color: #a94442;
+}
+
+/* Make sure the table is responsive for smaller screens */
+@media (max-width: 768px) {
+    .responsive-table th, .responsive-table td {
+        font-size: 0.8rem; /* Make text smaller on mobile */
+    }
+}

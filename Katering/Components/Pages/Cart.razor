@@ -1,0 +1,154 @@
+﻿@page "/cart"
+@using Katering.Services
+@using Katering.Data.Food
+@using Microsoft.EntityFrameworkCore
+@using Katering.Entities
+@inject IDbContextFactory<KateringDbContext> DbContextFactory
+@inject CartService CartService
+
+<h3 class="cart-title">Koszyk</h3>
+
+@if (!string.IsNullOrEmpty(ErrorMessage))
+{
+    <p class="error-message">@ErrorMessage</p>
+}
+else if (IsLoading)
+{
+    <p>Ładowanie produktów...</p>
+}
+else if (CartService.CartItems.Count == 0)
+{
+    <p>Twój koszyk jest pusty.</p>
+}
+else
+{
+    <div class="table-container">
+        <table class="responsive-table">
+            <thead>
+                <tr>
+                    <th>Nazwa</th>
+                    <th>Kategoria</th>
+                    <th>Kalorie</th>
+                    <th>Cena za sztukę</th>
+                    <th>Opis</th>
+                    <th>Ilość</th>
+                    <th>Łączna cena</th>
+                    <th>Opcje</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var (meal, quantity) in mealsWithQuantities)
+                {
+                    <tr>
+                        <td>@meal.Name</td>
+                        <td>@meal.MealCategory?.Name</td>
+                        <td>@meal.Calories</td>
+                        <td>@meal.Price.ToString()</td>
+                        <td>@meal.Description</td>
+                        <td>@quantity</td>
+                        <td>@(meal.Price * quantity)</td>
+                        <td>
+                            <button @onclick="() => IncrementMeal(meal.MealId)" class="quantity-btn">+</button>
+                            <button @onclick="() => DecrementMeal(meal.MealId)" class="quantity-btn">-</button>
+                            <button @onclick="() => RemoveFromCart(meal.MealId)" class="remove-btn">Usuń z koszyka</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div class="cart-total">
+            <p>Łączna cena: <strong>@CalculateTotalPrice().ToString("C")</strong></p>
+        </div>
+    </div>
+    <div>
+        <td><button @onclick="() => OrderMeal()" class="order-btn">Zamów</button></td>
+    </div>
+}
+
+@code {
+    public List<(Meal Meal, int Quantity)> mealsWithQuantities { get; private set; } = new();
+    public bool IsLoading { get; private set; } = true;
+    public string ErrorMessage { get; private set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadMealsAsync();
+    }
+
+    public async Task LoadMealsAsync()
+    {
+        try
+        {
+            if (!CartService.CartItems.Any())
+            {
+                mealsWithQuantities = new List<(Meal, int)>();
+                return;
+            }
+
+            using var dbContext = DbContextFactory.CreateDbContext();
+            var mealIds = CartService.CartItems.Keys;
+
+            var mealsInCart = await dbContext.Meals
+                .Include(m => m.MealCategory)
+                .Include(m => m.Diet)
+                .Where(m => mealIds.Contains(m.MealId))
+                .ToListAsync();
+
+            mealsWithQuantities = mealsInCart
+                .Select(meal => (meal, CartService.CartItems[meal.MealId]))
+                .ToList();
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Failed to load meals: {ex.Message}";
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    private void IncrementMeal(int mealId)
+    {
+        CartService.AddToCart(mealId);
+        var index = mealsWithQuantities.FindIndex(m => m.Meal.MealId == mealId);
+        if (index >= 0) mealsWithQuantities[index] = (mealsWithQuantities[index].Meal, mealsWithQuantities[index].Quantity + 1);
+    }
+
+    private void DecrementMeal(int mealId)
+    {
+        if (CartService.CartItems.ContainsKey(mealId))
+        {
+            CartService.RemoveFromCart(mealId);
+            var index = mealsWithQuantities.FindIndex(m => m.Meal.MealId == mealId);
+            if (index >= 0)
+            {
+                var quantity = mealsWithQuantities[index].Quantity - 1;
+                if (quantity > 0)
+                {
+                    mealsWithQuantities[index] = (mealsWithQuantities[index].Meal, quantity);
+                }
+                else
+                {
+                    mealsWithQuantities.RemoveAt(index);
+                }
+            }
+        }
+    }
+
+    private void RemoveFromCart(int mealId)
+    {
+        CartService.RemoveAllFromCart(mealId);
+        mealsWithQuantities.RemoveAll(m => m.Meal.MealId == mealId);
+    }
+
+    private decimal CalculateTotalPrice()
+    {
+        return mealsWithQuantities.Sum(m => (decimal)(m.Meal.Price ?? 0.0) * m.Quantity);
+    }
+
+    private void OrderMeal()
+    {
+        
+    }
+}
