@@ -3,7 +3,7 @@ from collections import Counter
 
 
 class MostPopularDishReportPDF:
-ss
+
 
     def __init__(self, title="Raport Najczesciej Zamawianego Dania"):
         self.pdf = FPDF()

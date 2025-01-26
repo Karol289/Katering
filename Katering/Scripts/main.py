@@ -1,9 +1,9 @@
 
-from flask import Flask, Response, request, make_response
+from flask import Flask, Response, request, make_response, abort
 from fpdf import FPDF
 
 from database import SQLConnection
-
+from pdf_klient_order import pdfPojedynczeZamowienia, pdfWEszystkieZamowienia, pdfWEszystkieZamowieniaMod, pdfKategoriaMod, pdfMealMod
 
 
 app = Flask(__name__)
@@ -23,7 +23,7 @@ def pdf():
     
     if user == "klient":
         if type == '1':
-            zap = """select u.Name as "UserName", u.Surname, u.Email ,m.Name as "MealName", m.Price, m.MealId, o.Discount, CONVERT(DATE, o.Date) from orders o 
+            zap = """select u.Name as "UserName", u.Surname, u.Email ,m.Name as "MealName", m.Price, m.MealId, o.Discount, CONVERT(DATE, o.Date) as 'Date' from orders o 
                     join users u on u.Id = o.UserId 
                     join MealsOrder mo on mo.OrderId = o.OrderId 
                     join Meals m on m.MealId = mo.MealId 
@@ -31,14 +31,14 @@ def pdf():
 
         if type == "2":
 
-            zap =  """select u.Name as "UserName", u.Surname, u.Email ,m.Name as "MealName", m.Price, m.MealId, o.Discount, CONVERT(DATE, o.Date) from orders o 
+            zap =  """select u.Name as "UserName", u.Surname, u.Email ,m.Name as "MealName", m.Price, m.MealId, o.Discount, CONVERT(DATE, o.Date) as 'Date', o.OrderId from orders o 
                     join users u on u.Id = o.UserId 
                     join MealsOrder mo on mo.OrderId = o.OrderId 
                     join Meals m on m.MealId = mo.MealId 
                     where u.Id = """ + str(opcje) + ";"
     elif (user == "mod" or user == "admin"):
         if type == '1':
-            zap = """select m.Name as "MealName", m.Price, m.MealId, o.Discount, CONVERT(DATE, o.Date), o.OrderId from orders o 
+            zap = """select m.Name as "MealName", m.Price, m.MealId, o.Discount, CONVERT(DATE, o.Date) as 'Date', o.OrderId from orders o 
                     join MealsOrder mo on mo.OrderId = o.OrderId 
                     join Meals m on m.MealId = mo.MealId"""
         if type == '2':
@@ -60,24 +60,34 @@ def pdf():
     
     df = data.queryAsDataframe(zap)
     
+    if df.empty:
+        abort(404, description="Nie znaleziono danych dla podanego zapytania.")
+
+            
+
+    
+    #Robienie wykresow
     print(df.head(10))
-    
-    pdf = FPDF()
-    pdf.add_page()
-    pdf.set_font("Arial", size=16)
-    pdf.cell(200, 10, txt="Przykladowa strona PDF", ln=True, align='C')
+    if user == "klient":
+        if type == '1':
+            pdf = pdfPojedynczeZamowienia(df=df)
+        if type == '2':
+            pdf = pdfWEszystkieZamowienia(df=df)
+    elif (user == "mod" or user == "admin"):
+        if type == '1':
+            pdf = pdfWEszystkieZamowieniaMod(df=df)
+        if type == '2':
+            pdf = pdfKategoriaMod(df=df)
+        if type == '3':
+            pdf = pdfMealMod(df=df)
+            
 
-    pdf.set_font("Arial", size=12)
-    pdf.cell(200, 10, txt="To jest testowy plik PDF.", ln=True, align='C')
+    
+    #Robienie pdf
+    
+    
     
 
-    
-    for column in df.columns:
-        pdf.cell(200, 10, txt= column, ln=True, align='C')
-        pdf.cell(200, 10, txt= "Max: "+ str(df[column].max()), ln=True, align='C')
-        pdf.cell(200, 10, txt= "Min: "+ str(df[column].min()), ln=True, align='C')
-   
-     
     headers = {
         'Content-Type': 'aplication/pdf',
         'Content-Disposition': f"attachment;filename=raport.pdf"
@@ -85,7 +95,7 @@ def pdf():
     
    # response = Response(pdf_output, headers=headers)
     
-    response = make_response((pdf.output(dest='S').encode('latin-1')))
+    response = make_response((pdf.pdf.output(dest='S').encode('latin-1')))
     
     
     response.headers.set('Content-Disposition', 'attachment', filename="raport" + '.pdf')
@@ -96,16 +106,7 @@ def pdf():
 
         
             
-            
-            
-
-        
-    
-    
-
-
-
-
+ 
 app.run(port=5000)
     
     
