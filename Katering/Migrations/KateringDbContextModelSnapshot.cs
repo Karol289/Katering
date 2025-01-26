@@ -35,7 +35,7 @@ namespace Katering.Migrations
 
                     b.HasKey("DietId");
 
-                    b.ToTable("Diets", (string)null);
+                    b.ToTable("Diets");
                 });
 
             modelBuilder.Entity("Katering.Data.Food.Meal", b =>
@@ -70,7 +70,7 @@ namespace Katering.Migrations
 
                     b.HasIndex("MealCategoryId");
 
-                    b.ToTable("Meals", (string)null);
+                    b.ToTable("Meals");
                 });
 
             modelBuilder.Entity("Katering.Data.Food.MealCategory", b =>
@@ -86,7 +86,7 @@ namespace Katering.Migrations
 
                     b.HasKey("MealCategoryId");
 
-                    b.ToTable("MealCategories", (string)null);
+                    b.ToTable("MealCategories");
                 });
 
             modelBuilder.Entity("Katering.Data.Food.Rating", b =>
@@ -118,7 +118,7 @@ namespace Katering.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Ratings", (string)null);
+                    b.ToTable("Ratings");
                 });
 
             modelBuilder.Entity("Katering.Data.Food.Subscription", b =>
@@ -142,10 +142,10 @@ namespace Katering.Migrations
 
                     b.HasIndex("DietId");
 
-                    b.ToTable("Subscriptions", (string)null);
+                    b.ToTable("Subscriptions");
                 });
 
-            modelBuilder.Entity("Katering.Data.Order.MealOrder", b =>
+            modelBuilder.Entity("Katering.Data.Orders.MealOrder", b =>
                 {
                     b.Property<int>("MealOrderId")
                         .ValueGeneratedOnAdd()
@@ -165,10 +165,10 @@ namespace Katering.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("MealsOrder", (string)null);
+                    b.ToTable("MealsOrder");
                 });
 
-            modelBuilder.Entity("Katering.Data.Order.Order", b =>
+            modelBuilder.Entity("Katering.Data.Orders.Order", b =>
                 {
                     b.Property<int>("OrderID")
                         .ValueGeneratedOnAdd()
@@ -197,16 +197,16 @@ namespace Katering.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Orders", (string)null);
+                    b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("Katering.Data.Order.Payment", b =>
+            modelBuilder.Entity("Katering.Data.Orders.Payment", b =>
                 {
-                    b.Property<int>("PaymentID")
+                    b.Property<int>("PaymentId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PaymentID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PaymentId"));
 
                     b.Property<DateTime?>("Date")
                         .HasColumnType("datetime2");
@@ -220,12 +220,12 @@ namespace Katering.Migrations
                     b.Property<double>("Value")
                         .HasColumnType("float");
 
-                    b.HasKey("PaymentID");
+                    b.HasKey("PaymentId");
 
-                    b.ToTable("Payments", (string)null);
+                    b.ToTable("Payments");
                 });
 
-            modelBuilder.Entity("Katering.Data.Order.SubscriptionOrder", b =>
+            modelBuilder.Entity("Katering.Data.Orders.SubscriptionOrder", b =>
                 {
                     b.Property<int>("SubscriptionOrderId")
                         .ValueGeneratedOnAdd()
@@ -245,7 +245,7 @@ namespace Katering.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("OrdersOrder", (string)null);
+                    b.ToTable("OrdersOrder");
                 });
 
             modelBuilder.Entity("Katering.Data.Users.Administrator", b =>
@@ -263,7 +263,7 @@ namespace Katering.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Administrators", (string)null);
+                    b.ToTable("Administrators");
                 });
 
             modelBuilder.Entity("Katering.Data.Users.Client", b =>
@@ -293,7 +293,7 @@ namespace Katering.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Clients", (string)null);
+                    b.ToTable("Clients");
                 });
 
             modelBuilder.Entity("Katering.Data.Users.Contractor", b =>
@@ -318,7 +318,7 @@ namespace Katering.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Contractors", (string)null);
+                    b.ToTable("Contractors");
                 });
 
             modelBuilder.Entity("Katering.Data.Users.Moderator", b =>
@@ -339,7 +339,7 @@ namespace Katering.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Moderators", (string)null);
+                    b.ToTable("Moderators");
                 });
 
             modelBuilder.Entity("Katering.Data.Users.User", b =>
@@ -371,12 +371,12 @@ namespace Katering.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Katering.Data.Food.Meal", b =>
                 {
-                    b.HasOne("Katering.Data.Food.Diet", "DietType")
+                    b.HasOne("Katering.Data.Food.Diet", "Diet")
                         .WithMany()
                         .HasForeignKey("DietId");
 
@@ -384,7 +384,7 @@ namespace Katering.Migrations
                         .WithMany()
                         .HasForeignKey("MealCategoryId");
 
-                    b.Navigation("DietType");
+                    b.Navigation("Diet");
 
                     b.Navigation("MealCategory");
                 });
@@ -413,13 +413,13 @@ namespace Katering.Migrations
                     b.Navigation("Diet");
                 });
 
-            modelBuilder.Entity("Katering.Data.Order.MealOrder", b =>
+            modelBuilder.Entity("Katering.Data.Orders.MealOrder", b =>
                 {
                     b.HasOne("Katering.Data.Food.Meal", "Payment")
                         .WithMany()
                         .HasForeignKey("MealId");
 
-                    b.HasOne("Katering.Data.Order.Order", "Order")
+                    b.HasOne("Katering.Data.Orders.Order", "Order")
                         .WithMany()
                         .HasForeignKey("OrderId");
 
@@ -428,9 +428,9 @@ namespace Katering.Migrations
                     b.Navigation("Payment");
                 });
 
-            modelBuilder.Entity("Katering.Data.Order.Order", b =>
+            modelBuilder.Entity("Katering.Data.Orders.Order", b =>
                 {
-                    b.HasOne("Katering.Data.Order.Payment", "Payment")
+                    b.HasOne("Katering.Data.Orders.Payment", "Payment")
                         .WithMany()
                         .HasForeignKey("PaymentId");
 
@@ -443,13 +443,13 @@ namespace Katering.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Katering.Data.Order.SubscriptionOrder", b =>
+            modelBuilder.Entity("Katering.Data.Orders.SubscriptionOrder", b =>
                 {
                     b.HasOne("Katering.Data.Food.Meal", "Payment")
                         .WithMany()
                         .HasForeignKey("MealId");
 
-                    b.HasOne("Katering.Data.Order.Order", "Order")
+                    b.HasOne("Katering.Data.Orders.Order", "Order")
                         .WithMany()
                         .HasForeignKey("OrderId");
 

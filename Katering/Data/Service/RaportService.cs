@@ -15,7 +15,7 @@ namespace Katering.Data.Service
             this.dbContext = dbContext;
         }
 
-        // Przykład: Pobierz wszystkie posiłki
+
         public List<Meal> GetAllMeals()
         {
             using (var context = dbContext.CreateDbContext())
@@ -29,12 +29,23 @@ namespace Katering.Data.Service
         {
             using (var context = dbContext.CreateDbContext())
             {
-                // Zwróć tylko zamówienia, których UserId pasuje do przekazanego userId
                 return context.Orders
                               .Where(order => order.User.Id == userId)
                               .ToList();
             }
         }
+
+
+        public List<MealCategory> GetAllMealCategories()
+        {
+            using (var context = dbContext.CreateDbContext())
+            {
+                return context.MealCategories.ToList();
+            }
+        }
+
+
+
 
     }
 }
