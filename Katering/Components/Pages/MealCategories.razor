@@ -1,0 +1,166 @@
+﻿@page "/mealCategories"
+@using Microsoft.EntityFrameworkCore
+@using Katering.Entities
+@using Katering.Data.Food
+@inject Katering.Data.Service.MealCategoryService MealCategoryService
+@inject NavigationManager NavigationManager
+
+<h2>Manage Meal Categories</h2>
+
+<!-- Form to add or edit a category -->
+<h3>@(isEditing ? "Edit Meal Category" : "Add New Meal Category")</h3>
+<div>
+    <label>Name:</label>
+    <input type="text" @bind="categoryName" placeholder="Category name" />
+</div>
+<button @onclick="SaveCategory">@(isEditing ? "Update Category" : "Add Category")</button>
+<button @onclick="CancelEdit" style="display:@(isEditing ? "inline" : "none")">Cancel</button>
+
+<!-- List of meal categories -->
+<h3>Existing Categories</h3>
+@if (mealCategories != null && mealCategories.Any())
+{
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var category in mealCategories)
+            {
+                <tr>
+                    <td>@category.Name</td>
+                    <td>
+                        <button @onclick="() => EditCategory(category)">Edit</button>
+                        <button @onclick="() => DeleteCategory(category.MealCategoryId)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No categories available.</p>
+}
+
+@if (isLoading)
+{
+    <p>Loading...</p>
+}
+
+@if (errorMessage != null)
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+
+@code {
+    private List<MealCategory> mealCategories = new();
+    private string categoryName = string.Empty;
+    private int? editingCategoryId = null;
+    private bool isEditing = false;
+    private bool isLoading = false;
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadCategories();
+    }
+
+    private async Task LoadCategories()
+    {
+        try
+        {
+            isLoading = true;
+            mealCategories = await MealCategoryService.GetMealCategoriesAsync();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"An error occurred: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task SaveCategory()
+    {
+        try
+        {
+            isLoading = true;
+
+            if (string.IsNullOrWhiteSpace(categoryName))
+            {
+                errorMessage = "Category name cannot be empty.";
+                return;
+            }
+
+            if (isEditing && editingCategoryId.HasValue)
+            {
+                await MealCategoryService.UpdateMealCategoryAsync(new MealCategory
+                    {
+                        MealCategoryId = editingCategoryId.Value,
+                        Name = categoryName
+                    });
+            }
+            else
+            {
+                await MealCategoryService.AddMealCategoryAsync(new MealCategory
+                    {
+                        Name = categoryName
+                    });
+            }
+
+            await LoadCategories();
+            ResetForm();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"An error occurred: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void EditCategory(MealCategory category)
+    {
+        categoryName = category.Name;
+        editingCategoryId = category.MealCategoryId;
+        isEditing = true;
+    }
+
+    private async Task DeleteCategory(int categoryId)
+    {
+        try
+        {
+            isLoading = true;
+            await MealCategoryService.DeleteMealCategoryAsync(categoryId);
+            await LoadCategories();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"An error occurred: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void CancelEdit()
+    {
+        ResetForm();
+    }
+
+    private void ResetForm()
+    {
+        categoryName = string.Empty;
+        editingCategoryId = null;
+        isEditing = false;
+    }
+}
