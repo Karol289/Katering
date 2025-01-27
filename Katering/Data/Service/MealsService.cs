@@ -6,27 +6,28 @@ namespace Katering.Data.Service
 {
     public class MealsService: KateringService
     {
-        private readonly IDbContextFactory<KateringDbContext> _dbContextFactory;
-        
-
-        public MealsService(IDbContextFactory<KateringDbContext> dbContextFactory) : base(dbContextFactory)
+        // Konstruktor przekazuje zależności do bazy danych
+        public MealsService(IDbContextFactory<KateringDbContext> dbContext) : base(dbContext)
         {
-            _dbContextFactory = dbContextFactory;
         }
 
-        public async Task<List<Meal>> GetAllMealsAsync()
+        public async Task<List<Diet>> GetDietsAsync()
         {
-            using (var context = _dbContextFactory.CreateDbContext())
-            {
-                // Fetch all meals from the database
-                var meals = await context.Meals.ToListAsync();
-
-                // Add a simple debug log to verify the meal count
-                Console.WriteLine($"Fetched {meals.Count} meals from the database.");
-
-                return meals;
-            }
+            using var context = _dbContext.CreateDbContext(); // Tworzenie kontekstu z fabryki
+            return await context.Diets.ToListAsync(); // Pobranie wszystkich rekordów z tabeli "Diets"
         }
 
+        public async Task<List<MealCategory>> GetMealCategoriesAsync()
+        {
+            using var context = _dbContext.CreateDbContext(); // Tworzenie kontekstu z fabryki
+            return await context.MealCategories.ToListAsync(); // Pobranie wszystkich rekordów z tabeli "MealCategories"
+        }
+
+        public async Task AddMealAsync(Meal meal)
+        {
+            using var context = _dbContext.CreateDbContext(); // Tworzenie kontekstu z fabryki
+            context.Meals.Add(meal); // Dodanie posiłku do tabeli "Meals"
+            await context.SaveChangesAsync(); // Zapisanie zmian w bazie danych
+        }
     }
 }

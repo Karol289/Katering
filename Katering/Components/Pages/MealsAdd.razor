@@ -2,226 +2,142 @@
 @using Microsoft.EntityFrameworkCore
 @using Katering.Entities
 @using Katering.Data.Food
-@inject IDbContextFactory<KateringDbContext> DbContextFactory
-@inject IJSRuntime JSRuntime
+@inject HttpClient Http
+@inject Katering.Data.Service.MealsService MealsService
+@inject NavigationManager NavigationManager
 
-<h2>Manage Meals</h2>
+<div class="form-group">
+    <label for="name">Meal Name</label>
+    <input id="name" class="form-control" @bind="meal.Name" />
+</div>
 
-<!-- Form to add/edit a meal -->
-<h3>@(editingMealId.HasValue ? "Edit Meal" : "Add New Meal")</h3>
-<div>
-    <label>Name:</label>
-    <input type="text" @bind="mealName" placeholder="Meal name" />
+<div class="form-group">
+    <label for="diet">Diet</label>
+    <select id="diet" class="form-control" @onchange="OnDietChanged">
+        <option value="">Select a diet</option>
+        @foreach (var diet in diets)
+        {
+            <option value="@diet.DietId">@diet.Name</option>
+        }
+    </select>
 </div>
-<div>
-    <label>Calories:</label>
-    <input type="number" @bind="mealCalories" placeholder="Calories" />
+
+<div class="form-group">
+    <label for="mealCategory">Meal Category</label>
+    <select id="mealCategory" class="form-control" @onchange="OnMealCategoryChanged">
+        <option value="">Select a category</option>
+        @foreach (var category in mealCategories)
+        {
+            <option value="@category.MealCategoryId">@category.Name</option>
+        }
+    </select>
 </div>
-<div>
-    <label>Price:</label>
-    <input type="number" step="0.01" @bind="mealPrice" placeholder="Price" />
+
+<div class="form-group">
+    <label for="calories">Calories</label>
+    <input id="calories" type="number" class="form-control" @bind="meal.Calories" />
 </div>
-<div>
-    <label>Description:</label>
-    <textarea @bind="mealDescription" placeholder="Meal description"></textarea>
+
+<div class="form-group">
+    <label for="price">Price</label>
+    <input id="price" type="number" step="0.01" class="form-control" @bind="meal.Price" />
 </div>
-<div>
-    <label>Diet ID:</label>
-    <input type="number" @bind="mealDietId" placeholder="Diet ID" />
+
+<div class="form-group">
+    <label for="description">Description</label>
+    <textarea id="description" class="form-control" @bind="meal.Description"></textarea>
 </div>
-<div>
-    <label>Meal Category ID:</label>
-    <input type="number" @bind="mealCategoryId" placeholder="Meal Category ID" />
-</div>
-<button @onclick="SaveMeal">@(editingMealId.HasValue ? "Save Changes" : "Add Meal")</button>
-@if (editingMealId.HasValue)
+
+<button class="btn btn-primary" @onclick="AddMeal">Add Meal</button>
+
+@if (isLoading)
 {
-    <button @onclick="CancelEdit">Cancel</button>
+    <p>Loading...</p>
 }
 
-<!-- List of meals -->
-<h3>Existing Meals</h3>
-@if (meals != null && meals.Any())
+@if (errorMessage != null)
 {
-    <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Calories</th>
-                <th>Price</th>
-                <th>Description</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var meal in meals)
-            {
-                <tr>
-                    <td>@meal.Name</td>
-                    <td>@meal.Calories</td>
-                    <td>@meal.Price</td>
-                    <td>@meal.Description</td>
-                    <td>
-                        <button @onclick="() => EditMeal(meal)">Edit</button>
-                        <button @onclick="() => ConfirmDeleteMeal(meal.MealId, meal.Name)">Delete</button>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <div class="alert alert-danger">@errorMessage</div>
 }
-else
+
+
+@if (isLoading)
 {
-    <p>No meals available.</p>
+    <p>Loading...</p>
+}
+
+@if (errorMessage != null)
+{
+    <div class="alert alert-danger">@errorMessage</div>
 }
 
 @code {
-    private List<Meal> meals = new();
-    private int? editingMealId = null;
-    private string mealName = string.Empty;
-    private int? mealCalories = null;
-    private double? mealPrice = null;
-    private string mealDescription = string.Empty;
-    private int? mealDietId = null;
-    private int? mealCategoryId = null;
+    private Meal meal = new Meal();
+    private List<Diet> diets = new();
+    private List<MealCategory> mealCategories = new();
+    private bool isLoading = false;
+    private string? errorMessage;
 
     protected override async Task OnInitializedAsync()
     {
-
-        await LoadMeals();
-    }
-
-    // private async Task AddSomeMeals()
-    // {
-    //     using (var context = new KateringDbContext(options))
-    //     {
-    //         var diet = new Diet { Name = "Vegetarian" };
-    //         var category = new MealCategory { Name = "Dinner" };
-
-    //         context.Diets.Add(diet);
-    //         context.MealCategories.Add(category);
-
-    //         context.Meals.Add(new Meal
-    //             {
-    //                 Name = "Vegetarian Pasta",
-    //                 Calories = 600,
-    //                 Price = 15.99,
-    //                 Description = "Delicious vegetarian pasta with fresh ingredients.",
-    //                 Diet = diet,
-    //                 MealCategory = category
-    //             });
-
-    //         context.SaveChanges();
-    //     }
-    // }
-
-    private async Task LoadMeals()
-    {
-        using var dbContext = DbContextFactory.CreateDbContext();
-        //meals = await dbContext.Meals.Include(m => m.Diet).Include(m => m.MealCategory).ToListAsync();
-        meals = await dbContext.Meals.ToListAsync();
-
-        // Debug log
-        Console.WriteLine($"Loaded {meals.Count} meals from database.");
-    }
-
-
-    private async Task SaveMeal()
-    {
-        using var dbContext = DbContextFactory.CreateDbContext();
-
-        if (editingMealId.HasValue)
+        try
         {
-            // Edit existing meal
-            var mealToEdit = await dbContext.Meals.FindAsync(editingMealId.Value);
-            if (mealToEdit != null)
+            isLoading = true;
+
+            // Pobranie diet
+            diets = await MealsService.GetDietsAsync();
+
+            // Pobranie kategorii posiłków
+            mealCategories = await MealsService.GetMealCategoriesAsync();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"An error occurred: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void OnDietChanged(ChangeEventArgs e)
+    {
+        var selectedDietId = int.Parse(e.Value.ToString());
+        meal.Diet = diets.FirstOrDefault(d => d.DietId == selectedDietId);
+    }
+
+    private void OnMealCategoryChanged(ChangeEventArgs e)
+    {
+        var selectedCategoryId = int.Parse(e.Value.ToString());
+        meal.MealCategory = mealCategories.FirstOrDefault(c => c.MealCategoryId == selectedCategoryId);
+    }
+
+    private async Task AddMeal()
+    {
+        try
+        {
+            isLoading = true;
+
+            // Wysłanie danych do API
+            var response = await Http.PostAsJsonAsync("api/Meals", meal);
+
+            if (response.IsSuccessStatusCode)
             {
-                // mealToEdit.Name = mealName;
-                // mealToEdit.Calories = mealCalories;
-                // mealToEdit.Price = mealPrice;
-                // mealToEdit.Description = mealDescription;
-                // mealToEdit.Diet = mealDietId.HasValue ? await dbContext.Diets.FindAsync(mealDietId.Value) : null;
-                // mealToEdit.MealCategory = mealCategoryId.HasValue ? await dbContext.MealCategories.FindAsync(mealCategoryId.Value) : null;
-
-                mealToEdit.Name = mealName;
-                mealToEdit.Calories = mealCalories;
-                mealToEdit.Price = mealPrice;
-                mealToEdit.Description = mealDescription;
-                dbContext.Meals.Update(mealToEdit);
-
-                Console.WriteLine($"Updated meal with ID {editingMealId.Value}");
+                NavigationManager.NavigateTo("/meals");
+            }
+            else
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                errorMessage = $"Failed to add meal: {error}";
             }
         }
-        else
+        catch (Exception ex)
         {
-            // Add new meal
-            var newMeal = new Meal
-                {
-                    // Name = mealName,
-                    // Calories = mealCalories,
-                    // Price = mealPrice,
-                    // Description = mealDescription,
-                    // Diet = mealDietId.HasValue ? await dbContext.Diets.FindAsync(mealDietId.Value) : null,
-                    // MealCategory = mealCategoryId.HasValue ? await dbContext.MealCategories.FindAsync(mealCategoryId.Value) : null
-
-                    Name = mealName,
-                    Calories = mealCalories,
-                    Price = mealPrice,
-                    Description = mealDescription
-                };
-            dbContext.Meals.Add(newMeal);
+            errorMessage = $"An error occurred: {ex.Message}";
         }
-        
-        await dbContext.SaveChangesAsync();
-        await LoadMeals();
-        ResetForm();
-    }
-
-    private void EditMeal(Meal meal)
-    {
-        editingMealId = meal.MealId;
-        mealName = meal.Name;
-        mealCalories = meal.Calories;
-        mealPrice = meal.Price;
-        mealDescription = meal.Description;
-        mealDietId = meal.Diet.DietId;
-        mealCategoryId = meal.MealCategory?.MealCategoryId;
-    }
-
-    private async Task ConfirmDeleteMeal(int mealId, string mealName)
-    {
-        bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm", $"Are you sure you want to delete the meal '{mealName}'?");
-        if (confirmed)
+        finally
         {
-            await DeleteMeal(mealId);
+            isLoading = false;
         }
-    }
-
-    private async Task DeleteMeal(int mealId)
-    {
-        using var dbContext = DbContextFactory.CreateDbContext();
-        var mealToDelete = await dbContext.Meals.FindAsync(mealId);
-        if (mealToDelete != null)
-        {
-            dbContext.Meals.Remove(mealToDelete);
-            await dbContext.SaveChangesAsync();
-        }
-        await LoadMeals();
-    }
-
-    private void CancelEdit()
-    {
-        ResetForm();
-    }
-
-    private void ResetForm()
-    {
-        editingMealId = null;
-        mealName = string.Empty;
-        mealCalories = null;
-        mealPrice = null;
-        mealDescription = string.Empty;
-        mealDietId = null;
-        mealCategoryId = null;
     }
 }
