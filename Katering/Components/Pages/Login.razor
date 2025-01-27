@@ -43,16 +43,13 @@
 
     public LoginModel Model { get; set; } = new LoginModel();
 
-<<<<<<< HEAD
+
     protected override void OnInitialized()
     {
         editContext = new EditContext(Model);
 
     }   
-=======
-    protected override void OnInitialized() => Model ??= new();
 
->>>>>>> df9a245f6c96ab8d53d80ccf7fb8c5e0cef342d0
     private async Task LoginUser()
     {
         var validationErrors = Model.Validate();
