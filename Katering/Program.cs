@@ -37,6 +37,10 @@ builder.Services.AddScoped<CartService>();
 
 builder.Services.AddScoped<MealsService>();
 
+builder.Services.AddScoped<MealCategoryService>();
+
+builder.Services.AddScoped<DietsService>();
+
 // Klient HTTP do API raportow
 builder.Services.AddHttpClient();
 

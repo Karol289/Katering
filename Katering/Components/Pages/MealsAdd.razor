@@ -5,30 +5,30 @@
 @inject Katering.Data.Service.MealsService MealsService
 @inject NavigationManager NavigationManager
 
-<h2>Manage Meals</h2>
+<h2>Zarządzanie posiłkami</h2>
 
-<!-- Form to add or edit a meal -->
-<h3>@(isEditing ? "Edit Meal" : "Add New Meal")</h3>
+<!-- Formularz dodawania lub edycji posiłku -->
+<h3>@(isEditing ? "Edytuj posiłek" : "Dodaj nowy posiłek")</h3>
 <div>
-    <label>Name:</label>
-    <input type="text" @bind="mealName" placeholder="Meal name" />
+    <label>Nazwa:</label>
+    <input type="text" @bind="mealName" placeholder="Nazwa posiłku" />
 </div>
 <div>
-    <label>Calories:</label>
-    <input type="number" @bind="mealCalories" placeholder="Calories" />
+    <label>Kalorie:</label>
+    <input type="number" @bind="mealCalories" placeholder="Kalorie" />
 </div>
 <div>
-    <label>Price:</label>
-    <input type="number" step="0.01" @bind="mealPrice" placeholder="Price" />
+    <label>Cena:</label>
+    <input type="number" step="0.01" @bind="mealPrice" placeholder="Cena" />
 </div>
 <div>
-    <label>Description:</label>
-    <textarea @bind="mealDescription" placeholder="Meal description"></textarea>
+    <label>Opis:</label>
+    <textarea @bind="mealDescription" placeholder="Opis posiłku"></textarea>
 </div>
 <div>
-    <label>Diet:</label>
+    <label>Dieta:</label>
     <select @bind="selectedDietId">
-        <option value="">-- Select Diet --</option>
+        <option value="">-- Wybierz dietę --</option>
         @foreach (var diet in diets)
         {
             <option value="@diet.DietId">@diet.Name</option>
@@ -36,35 +36,35 @@
     </select>
 </div>
 <div>
-    <label>Meal Category:</label>
+    <label>Kategoria posiłku:</label>
     <select @bind="selectedCategoryId">
-        <option value="">-- Select Category --</option>
+        <option value="">-- Wybierz kategorię --</option>
         @foreach (var category in mealCategories)
         {
             <option value="@category.MealCategoryId">@category.Name</option>
         }
     </select>
 </div>
-<button @onclick="SaveMeal">@(isEditing ? "Update Meal" : "Add Meal")</button>
+<button @onclick="SaveMeal">@(isEditing ? "Zaktualizuj posiłek" : "Dodaj posiłek")</button>
 @if (isEditing)
 {
-    <button @onclick="CancelEdit">Cancel Edit</button>
+    <button @onclick="CancelEdit">Anuluj edycję</button>
 }
 
-<!-- List of meals -->
-<h3 align="center">Existing Meals</h3>
+<!-- Lista posiłków -->
+<h3 align="center">Istniejące posiłki</h3>
 @if (meals != null && meals.Any())
 {
     <table align="center">
         <thead>
             <tr>
-                <th>Name</th>
-                <th>Calories</th>
-                <th>Price</th>
-                <th>Description</th>
-                <th>Diet</th>
-                <th>Category</th>
-                <th>Actions</th>
+                <th>Nazwa</th>
+                <th>Kalorie</th>
+                <th>Cena</th>
+                <th>Opis</th>
+                <th>Dieta</th>
+                <th>Kategoria</th>
+                <th>Akcje</th>
             </tr>
         </thead>
         <tbody>
@@ -78,8 +78,8 @@
                     <td>@meal.Diet?.Name</td>
                     <td>@meal.MealCategory?.Name</td>
                     <td>
-                        <button @onclick="() => EditMeal(meal)">Edit</button>
-                        <button @onclick="() => DeleteMeal(meal.MealId)">Delete</button>
+                        <button @onclick="() => EditMeal(meal)">Edytuj</button>
+                        <button @onclick="() => DeleteMeal(meal.MealId)">Usuń</button>
                     </td>
                 </tr>
             }
@@ -88,12 +88,12 @@
 }
 else
 {
-    <p>No meals available.</p>
+    <p>Brak dostępnych posiłków.</p>
 }
 
 @if (isLoading)
 {
-    <p>Loading...</p>
+    <p>Ładowanie...</p>
 }
 
 @if (errorMessage != null)
@@ -127,7 +127,7 @@ else
         }
         catch (Exception ex)
         {
-            errorMessage = $"An error occurred: {ex.Message}";
+            errorMessage = $"Wystąpił błąd: {ex.Message}";
         }
         finally
         {
@@ -140,14 +140,13 @@ else
         diets = await MealsService.GetDietsAsync();
         mealCategories = await MealsService.GetMealCategoriesAsync();
         meals = await MealsService.GetMealsAsync();
-        errorMessage = null;
     }
 
     private async Task SaveMeal()
     {
         if (string.IsNullOrWhiteSpace(mealName) || !mealCalories.HasValue || !mealPrice.HasValue)
         {
-            errorMessage = "Please fill out all required fields.";
+            errorMessage = "Proszę wypełnić wszystkie wymagane pola.";
             return;
         }
 
@@ -181,7 +180,7 @@ else
         }
         catch (Exception ex)
         {
-            errorMessage = $"An error occurred: {ex.Message}";
+            errorMessage = $"Wystąpił błąd: {ex.Message}";
         }
         finally
         {
@@ -199,7 +198,7 @@ else
         }
         catch (Exception ex)
         {
-            errorMessage = $"An error occurred: {ex.Message}";
+            errorMessage = $"Wystąpił błąd: {ex.Message}";
         }
         finally
         {
@@ -234,5 +233,6 @@ else
         selectedCategoryId = null;
         editingMealId = null;
         isEditing = false;
+        errorMessage = null;
     }
 }

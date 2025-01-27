@@ -5,26 +5,26 @@
 @inject Katering.Data.Service.MealCategoryService MealCategoryService
 @inject NavigationManager NavigationManager
 
-<h2>Manage Meal Categories</h2>
+<h2>Zarządzaj kategoriami posiłków</h2>
 
-<!-- Form to add or edit a category -->
-<h3>@(isEditing ? "Edit Meal Category" : "Add New Meal Category")</h3>
+<!-- Formularz do dodawania lub edycji kategorii -->
+<h3>@(isEditing ? "Edytuj kategorię posiłku" : "Dodaj nową kategorię posiłku")</h3>
 <div>
-    <label>Name:</label>
-    <input type="text" @bind="categoryName" placeholder="Category name" />
+    <label>Nazwa:</label>
+    <input type="text" @bind="categoryName" placeholder="Nazwa kategorii" />
 </div>
-<button @onclick="SaveCategory">@(isEditing ? "Update Category" : "Add Category")</button>
-<button @onclick="CancelEdit" style="display:@(isEditing ? "inline" : "none")">Cancel</button>
+<button @onclick="SaveCategory">@(isEditing ? "Zaktualizuj kategorię" : "Dodaj kategorię")</button>
+<button @onclick="CancelEdit" style="display:@(isEditing ? "inline" : "none")">Anuluj</button>
 
-<!-- List of meal categories -->
-<h3>Existing Categories</h3>
+<!-- Lista kategorii posiłków -->
+<h3 align="center">Istniejące kategorie</h3>
 @if (mealCategories != null && mealCategories.Any())
 {
-    <table>
+    <table align="center">
         <thead>
             <tr>
-                <th>Name</th>
-                <th>Actions</th>
+                <th>Nazwa</th>
+                <th>Akcje</th>
             </tr>
         </thead>
         <tbody>
@@ -33,8 +33,8 @@
                 <tr>
                     <td>@category.Name</td>
                     <td>
-                        <button @onclick="() => EditCategory(category)">Edit</button>
-                        <button @onclick="() => DeleteCategory(category.MealCategoryId)">Delete</button>
+                        <button @onclick="() => EditCategory(category)">Edytuj</button>
+                        <button @onclick="() => DeleteCategory(category.MealCategoryId)">Usuń</button>
                     </td>
                 </tr>
             }
@@ -43,12 +43,12 @@
 }
 else
 {
-    <p>No categories available.</p>
+    <p>Brak dostępnych kategorii.</p>
 }
 
 @if (isLoading)
 {
-    <p>Loading...</p>
+    <p>Wczytywanie...</p>
 }
 
 @if (errorMessage != null)
@@ -78,7 +78,7 @@ else
         }
         catch (Exception ex)
         {
-            errorMessage = $"An error occurred: {ex.Message}";
+            errorMessage = $"Wystąpił błąd: {ex.Message}";
         }
         finally
         {
@@ -94,7 +94,7 @@ else
 
             if (string.IsNullOrWhiteSpace(categoryName))
             {
-                errorMessage = "Category name cannot be empty.";
+                errorMessage = "Nazwa kategorii nie może być pusta.";
                 return;
             }
 
@@ -119,7 +119,7 @@ else
         }
         catch (Exception ex)
         {
-            errorMessage = $"An error occurred: {ex.Message}";
+            errorMessage = $"Wystąpił błąd: {ex.Message}";
         }
         finally
         {
@@ -144,7 +144,7 @@ else
         }
         catch (Exception ex)
         {
-            errorMessage = $"An error occurred: {ex.Message}";
+            errorMessage = $"Wystąpił błąd: {ex.Message}";
         }
         finally
         {
@@ -162,5 +162,6 @@ else
         categoryName = string.Empty;
         editingCategoryId = null;
         isEditing = false;
+        errorMessage = null;
     }
 }

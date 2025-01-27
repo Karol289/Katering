@@ -1,0 +1,111 @@
+﻿@page "/diets"
+@using Microsoft.EntityFrameworkCore
+@using Katering.Entities
+@using Katering.Data.Food
+@inject Katering.Data.Service.DietsService DietsService
+
+<h3>Diety</h3>
+
+<!-- Tabela z listą diet -->
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nazwa</th>
+            <th>Akcje</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var diet in dietList)
+        {
+            <tr>
+                <td>@diet.DietId</td>
+                <td>
+                    @if (EditingDiet?.DietId == diet.DietId)
+                    {
+                        <input @bind="EditingDiet.Name" class="form-control" />
+                    }
+                    else
+                    {
+                        @diet.Name
+                    }
+                </td>
+                <td>
+                    @if (EditingDiet?.DietId == diet.DietId)
+                    {
+                        <button @onclick="SaveDiet">Zapisz</button>
+                        <button @onclick="CancelEdit">Anuluj</button>
+                    }
+                    else
+                    {
+                        <button @onclick="() => EditDiet(diet)">Edytuj</button>
+                        <button @onclick="() => DeleteDiet(diet.DietId)">Usuń</button>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Formularz dodawania nowej diety -->
+<h4>Dodaj nową dietę</h4>
+<div class="form-group">
+    <input @bind="NewDiet.Name" placeholder="Nazwa diety" class="form-control" />
+    <button @onclick="AddDiet">Dodaj</button>
+</div>
+
+@code {
+    private List<Diet> dietList = new();
+    private Diet NewDiet = new();
+    private Diet? EditingDiet = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDiets();
+    }
+
+    private async Task LoadDiets()
+    {
+        dietList = await DietsService.GetDietsAsync();
+    }
+
+    private async Task AddDiet()
+    {
+        if (!string.IsNullOrWhiteSpace(NewDiet.Name))
+        {
+            await DietsService.AddDietAsync(NewDiet);
+            NewDiet = new Diet();
+            await LoadDiets();
+        }
+    }
+
+    private void EditDiet(Diet diet)
+    {
+        EditingDiet = new Diet
+            {
+                DietId = diet.DietId,
+                Name = diet.Name
+            };
+    }
+
+    private async Task SaveDiet()
+    {
+        if (EditingDiet != null)
+        {
+            await DietsService.UpdateDietAsync(EditingDiet);
+            EditingDiet = null;
+            await LoadDiets();
+        }
+    }
+
+    private void CancelEdit()
+    {
+        EditingDiet = null;
+    }
+
+    private async Task DeleteDiet(int dietId)
+    {
+        await DietsService.DeleteDietAsync(dietId);
+        await LoadDiets();
+    }
+}
