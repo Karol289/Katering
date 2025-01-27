@@ -2,14 +2,13 @@
 @using Microsoft.EntityFrameworkCore
 @using Katering.Entities
 @using Katering.Data.Food
-@inject HttpClient Http
 @inject Katering.Data.Service.MealsService MealsService
 @inject NavigationManager NavigationManager
 
 <h2>Manage Meals</h2>
 
-<!-- Form to add a new meal -->
-<h3>Add New Meal</h3>
+<!-- Form to add or edit a meal -->
+<h3>@(isEditing ? "Edit Meal" : "Add New Meal")</h3>
 <div>
     <label>Name:</label>
     <input type="text" @bind="mealName" placeholder="Meal name" />
@@ -46,7 +45,11 @@
         }
     </select>
 </div>
-<button @onclick="AddMeal">Add Meal</button>
+<button @onclick="SaveMeal">@(isEditing ? "Update Meal" : "Add Meal")</button>
+@if (isEditing)
+{
+    <button @onclick="CancelEdit">Cancel Edit</button>
+}
 
 <!-- List of meals -->
 <h3>Existing Meals</h3>
@@ -61,6 +64,7 @@
                 <th>Description</th>
                 <th>Diet</th>
                 <th>Category</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -73,6 +77,10 @@
                     <td>@meal.Description</td>
                     <td>@meal.Diet?.Name</td>
                     <td>@meal.MealCategory?.Name</td>
+                    <td>
+                        <button @onclick="() => EditMeal(meal)">Edit</button>
+                        <button @onclick="() => DeleteMeal(meal.MealId)">Delete</button>
+                    </td>
                 </tr>
             }
         </tbody>
@@ -82,18 +90,6 @@ else
 {
     <p>No meals available.</p>
 }
-
-
-@if (isLoading)
-{
-    <p>Loading...</p>
-}
-
-@if (errorMessage != null)
-{
-    <div class="alert alert-danger">@errorMessage</div>
-}
-
 
 @if (isLoading)
 {
@@ -112,20 +108,22 @@ else
     private string mealDescription = string.Empty;
     private int? selectedDietId = null;
     private int? selectedCategoryId = null;
+    private int? editingMealId = null;
+
     private List<Diet> diets = new();
     private List<MealCategory> mealCategories = new();
     private List<Meal> meals = new();
 
     private bool isLoading = false;
     private string? errorMessage;
+    private bool isEditing = false;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
             isLoading = true;
-
-            await ReloadTables();
+            await ReloadData();
         }
         catch (Exception ex)
         {
@@ -137,89 +135,88 @@ else
         }
     }
 
-    private async Task ReloadTables()
+    private async Task ReloadData()
     {
-        // Pobranie diet
         diets = await MealsService.GetDietsAsync();
-
-        // Pobranie kategorii posiłków
         mealCategories = await MealsService.GetMealCategoriesAsync();
-
-        // Pobranie wszystkich posiłków
         meals = await MealsService.GetMealsAsync();
+        errorMessage = null;
     }
 
-    // private void OnDietChanged(ChangeEventArgs e)
-    // {
-    //     var selectedDietId = int.Parse(e.Value.ToString());
-    //     meal.Diet = diets.FirstOrDefault(d => d.DietId == selectedDietId);
-    // }
-
-    // private void OnMealCategoryChanged(ChangeEventArgs e)
-    // {
-    //     var selectedCategoryId = int.Parse(e.Value.ToString());
-    //     meal.MealCategory = mealCategories.FirstOrDefault(c => c.MealCategoryId == selectedCategoryId);
-    // }
-
-    // private async Task AddMeal()
-    // {
-    //     try
-    //     {
-    //         isLoading = true;
-
-    //         // Wysłanie danych do API
-    //         var response = await Http.PostAsJsonAsync("api/Meals", meal);
-
-    //         if (response.IsSuccessStatusCode)
-    //         {
-    //             NavigationManager.NavigateTo("/meals");
-    //         }
-    //         else
-    //         {
-    //             var error = await response.Content.ReadAsStringAsync();
-    //             errorMessage = $"Failed to add meal: {error}";
-    //         }
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         errorMessage = $"An error occurred: {ex.Message}";
-    //     }
-    //     finally
-    //     {
-    //         isLoading = false;
-    //     }
-    // }
-
-    private async Task AddMeal()
+    private async Task SaveMeal()
     {
         if (string.IsNullOrWhiteSpace(mealName) || !mealCalories.HasValue || !mealPrice.HasValue)
         {
-            Console.WriteLine("Please fill out all required fields.");
+            errorMessage = "Please fill out all required fields.";
             return;
         }
 
-        var newMeal = new Meal
-            {
-                Name = mealName,
-                Calories = mealCalories.Value,
-                Price = mealPrice.Value,
-                Description = mealDescription,
-                Diet = diets.FirstOrDefault(d => d.DietId == selectedDietId),
-                MealCategory = mealCategories.FirstOrDefault(mc => mc.MealCategoryId == selectedCategoryId)
-            };
+        try
+        {
+            isLoading = true;
 
-        await MealsService.AddMealAsync(newMeal);
-        await ReloadTables(); // Reload meals to update the list
-        ResetForm();
+            var meal = new Meal
+                {
+                    Name = mealName,
+                    Calories = mealCalories.Value,
+                    Price = mealPrice.Value,
+                    Description = mealDescription,
+                    Diet = diets.FirstOrDefault(d => d.DietId == selectedDietId),
+                    MealCategory = mealCategories.FirstOrDefault(mc => mc.MealCategoryId == selectedCategoryId)
+                };
+
+            if (isEditing && editingMealId.HasValue)
+            {
+                meal.MealId = editingMealId.Value;
+                await MealsService.UpdateMealAsync(meal);
+                isEditing = false;
+            }
+            else
+            {
+                await MealsService.AddMealAsync(meal);
+            }
+
+            await ReloadData();
+            ResetForm();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"An error occurred: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task DeleteMeal(int mealId)
+    {
+        try
+        {
+            isLoading = true;
+            await MealsService.DeleteMealAsync(mealId);
+            await ReloadData();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"An error occurred: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
     }
 
     private void EditMeal(Meal meal)
     {
-        //editingMealId = meal.MealId;
+        editingMealId = meal.MealId;
         mealName = meal.Name;
         mealCalories = meal.Calories;
         mealPrice = meal.Price;
         mealDescription = meal.Description;
+        selectedDietId = meal.Diet?.DietId;
+        selectedCategoryId = meal.MealCategory?.MealCategoryId;
+        isEditing = true;
     }
 
     private void CancelEdit()
@@ -235,5 +232,7 @@ else
         mealDescription = string.Empty;
         selectedDietId = null;
         selectedCategoryId = null;
+        editingMealId = null;
+        isEditing = false;
     }
 }
