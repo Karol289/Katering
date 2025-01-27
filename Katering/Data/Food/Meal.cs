@@ -23,6 +23,9 @@ namespace Katering.Data.Food
         public double? Price { get; set; }
         public string? Description { get; set; }
 
+        // Dodanie relacji z Rating
+        public List<Rating> Ratings { get; set; } = new();
+
         public Meal() { }   
     }
 

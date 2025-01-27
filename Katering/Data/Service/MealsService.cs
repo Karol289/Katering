@@ -23,14 +23,6 @@ namespace Katering.Data.Service
             return await context.MealCategories.ToListAsync(); // Pobranie wszystkich rekordów z tabeli "MealCategories"
         }
 
-        public async Task<List<Meal>> GetMealsAsync()
-        {
-            using var context = _dbContext.CreateDbContext(); // Tworzenie kontekstu z fabryki
-            return await context.Meals
-                .Include(m => m.Diet)
-                .Include(m => m.MealCategory)
-                .ToListAsync(); // Pobranie wszystkich rekordów z tabeli "MealCategories"
-        }
         public async Task AddMealAsync(Meal meal)
         {
             using var context = _dbContext.CreateDbContext(); // Tworzenie kontekstu z fabryki
@@ -91,6 +83,16 @@ namespace Katering.Data.Service
 
             context.Meals.Remove(mealToDelete);
             await context.SaveChangesAsync();
+        }
+
+        public async Task<List<Meal>> GetMealsWithRatingsAsync()
+        {
+            using var context = _dbContext.CreateDbContext();
+            return await context.Meals
+                .Include(m => m.Ratings) // Załadowanie ocen
+                .Include(m => m.Diet) // Załadowanie diety
+                .Include(m => m.MealCategory) // Załadowanie kategorii
+                .ToListAsync();
         }
 
     }

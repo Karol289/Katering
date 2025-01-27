@@ -64,6 +64,7 @@
                 <th>Opis</th>
                 <th>Dieta</th>
                 <th>Kategoria</th>
+                <th>Średnia Ocena</th>
                 <th>Akcje</th>
             </tr>
         </thead>
@@ -77,6 +78,7 @@
                     <td>@meal.Description</td>
                     <td>@meal.Diet?.Name</td>
                     <td>@meal.MealCategory?.Name</td>
+                    <td>@(meal.Ratings.Any() ? meal.Ratings.Average(r => r.Value ?? 0).ToString("0.00") : "Brak")</td>
                     <td>
                         <button @onclick="() => EditMeal(meal)">Edytuj</button>
                         <button @onclick="() => DeleteMeal(meal.MealId)">Usuń</button>
@@ -139,7 +141,7 @@ else
     {
         diets = await MealsService.GetDietsAsync();
         mealCategories = await MealsService.GetMealCategoriesAsync();
-        meals = await MealsService.GetMealsAsync();
+        meals = await MealsService.GetMealsWithRatingsAsync();
     }
 
     private async Task SaveMeal()
