@@ -33,7 +33,9 @@
                             <td>@rating.Value</td>
                             <td>@rating.Content</td>
                             <td>
+                                @if (rating.User.Id == SessionState.User.UserId){
                                 <button class="action-btn delete-btn" @onclick="@(() => DeleteRating(rating.RatingId))">Delete</button>
+                                }
                             </td>
                         </tr>
                     }
@@ -131,8 +133,8 @@
             }
 
             newRating.RatingId = ratings.Any() ? ratings.Last().RatingId + 1 : 1;
-            newRating.Meal = meal;
-            newRating.User = user;
+            newRating.MealId = newMeal.MealId;
+            newRating.UserId = SessionState.User.UserId;
 
             using var dbContext = DbContextFactory.CreateDbContext();
             dbContext.Ratings.Add(newRating);
