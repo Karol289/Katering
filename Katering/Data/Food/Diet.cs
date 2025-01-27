@@ -15,4 +15,3 @@ namespace Katering.Data.Food
     }
 
 }
-

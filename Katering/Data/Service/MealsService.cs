@@ -29,5 +29,11 @@ namespace Katering.Data.Service
             context.Meals.Add(meal); // Dodanie posiłku do tabeli "Meals"
             await context.SaveChangesAsync(); // Zapisanie zmian w bazie danych
         }
+
+        public async Task<List<Meal>> GetMealsAsync()
+        {
+            using var context = _dbContext.CreateDbContext(); // Tworzenie kontekstu z fabryki
+            return await context.Meals.ToListAsync(); // Pobranie wszystkich rekordów z tabeli "MealCategories"
+        }
     }
 }
