@@ -36,6 +36,11 @@ namespace Katering.Services
             Console.WriteLine($"Meal {mealId} added to the cart. Quantity: {_cartItems[mealId]}");
         }
 
+        public void ClearCart()
+        {
+            _cartItems.Clear();
+        }
+
         // Decrements the quantity of a meal or removes it if the quantity becomes zero
         public void RemoveFromCart(int mealId)
         {

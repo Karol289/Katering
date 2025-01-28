@@ -1,103 +1,246 @@
-﻿/* Title styling */
+﻿/* Title at the top */
 .cart-title {
-    font-size: 4vw;
+    font-size: 4vw; /* Proportional font size */
     text-align: center;
-    margin-bottom: 30px;
-    color: #ffffff;
+    margin-bottom: 50px;
+    color: #fff;
+    font-weight: bold; /* Bold title for emphasis */
 }
 
-/* Error message styling */
-.error-message {
-    color: #d9534f;
-    text-align: center;
-    font-size: 1.2rem;
-    margin: 20px 0;
-    padding: 10px;
-    background-color: #f9d6d5;
-    border: 1px solid #d43f3a;
-    border-radius: 5px;
-}
-
-/* Info or loading message styling */
-p {
-    font-size: 1rem;
-    text-align: center;
-    color: #555555;
-}
-
-/* Table container for scrollable content */
-.table-container {
-    max-height: 400px;
-    overflow-y: auto;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background: #fff;
-    margin: 0 auto;
-    padding: 10px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-/* Responsive table */
+/* General table styling */
 .responsive-table {
-    width: 100%;
-    border-collapse: collapse;
-    table-layout: fixed;
+    width: 90%; /* Ensure the table does not take up full width on larger screens */
+    max-width: 1200px; /* Max width to prevent over-stretching */
     margin: 0 auto;
+    border-collapse: collapse;
+    table-layout: auto;
+    border: 1px solid #ddd; /* Soft border for table */
 }
 
-    /* Table headers */
-    .responsive-table th {
-        background-color: #6c757d;
-        color: white;
-        font-weight: bold;
+    .responsive-table th, .responsive-table td {
+        padding: 10px 15px;
         text-align: left;
-        padding: 12px;
+        font-size: 1rem; /* Maintain readable font size */
+    }
+
+    .responsive-table th {
+        background-color: #628328; /* Header background color matching theme */
+        color: white;
+        text-transform: uppercase; /* All caps for consistency */
         position: sticky;
         top: 0;
+        z-index: 2;
     }
 
-    /* Table rows and cells */
-    .responsive-table td {
-        text-align: left;
-        padding: 12px;
-        border-bottom: 1px solid #ddd;
-        word-wrap: break-word; /* Ensures long text breaks properly */
+    .responsive-table tr {
+        background-color: #f9f9f9;
+        transition: background-color 0.3s ease-in-out;
     }
 
-    .responsive-table tr:hover {
-        background-color: #f2f2f2;
-    }
+        .responsive-table tr:hover {
+            background-color: #e6f7e6; /* Subtle row hover effect */
+        }
 
-/* Remove from cart button */
-.add-to-cart-btn {
-    background-color: #28a745;
+/* Table body scroll with fixed height */
+.table-container {
+    height: 400px;
+    overflow-y: auto;
+}
+
+/* Buttons and Actions Styling */
+
+/* Styling for the quantity button */
+.quantity-btn {
+    padding: 8px 12px;
+    background-color: #628328; /* Matches the header color */
     color: white;
-    padding: 10px 15px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-    font-size: 0.9rem;
-    white-space: nowrap;
+    transition: background-color 0.3s ease-in-out;
+    font-size: 1rem;
 }
 
-    .add-to-cart-btn:hover {
-        background-color: #218838;
+    .quantity-btn:hover {
+        background-color: #4a5e2f; /* Darker green on hover */
     }
 
-/* Smaller screens adjustments */
+/* Styling for the remove button (same as order-btn) */
+.remove-btn {
+    padding: 12px 30px;
+    background-color: #4CAF50; /* Green background */
+    color: white;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+    font-weight: bold;
+}
+
+    .remove-btn:hover {
+        background-color: #45a049; /* Darker shade on hover */
+    }
+
+/* Styling for the order button (the same as remove-btn) */
+.order-btn {
+    padding: 12px 30px;
+    background-color: #4CAF50;
+    color: white;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+}
+
+    .order-btn:hover {
+        background-color: #45a049; /* Darker shade on hover */
+    }
+
+/* Cart total outside of table - center aligned */
+.cart-total {
+    text-align: center; /* Center the total price text */
+    font-size: 1.2rem;
+    margin-top: 20px;
+    color: white; /* Total price in white */
+}
+
+    .cart-total strong {
+        font-size: 1.5rem;
+        color: white; /* Ensured the total price remains white */
+    }
+
+/* Container holding both total and order button */
+.cart-summary {
+    display: flex; /* Use flexbox for side-by-side layout */
+    justify-content: center; /* Center both items horizontally */
+    align-items: center; /* Vertically align items */
+    margin-top: 20px; /* Adds some space above */
+}
+
+/* Style for the total price text */
+.cart-total {
+    font-size: 1.6rem; /* Larger font size for total */
+    color: white;
+    margin-right: 20px; /* Adds some space between price and button */
+}
+
+    /* Bold the actual total price */
+    .cart-total strong {
+        font-size: 1.8rem; /* Slightly bigger font for the price */
+        color: white;
+    }
+
+/* Styling for the order button */
+.order-btn-container {
+    /* No additional styling needed */
+}
+
+/* Empty cart message and error message */
+.empty-cart-message, .error-message {
+    font-size: 1.2rem;
+    text-align: center;
+    color: #444;
+    padding: 15px;
+}
+
+.empty-cart-message {
+    background-color: #f9f9f9;
+    font-size: 1.5rem;
+}
+
+.error-message {
+    background-color: #f2dede;
+    color: #a94442;
+}
+
+/* Centered content for the confirmation section after the order is placed */
+.order-confirmation {
+    text-align: center;
+    margin-top: 50px;
+    padding: 30px;
+    background-color: #f9f9f9; /* Soft background */
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+.confirmation-title {
+    font-size: 2rem; /* Larger font for the title */
+    color: #4CAF50;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.confirmation-text {
+    font-size: 1.1rem;
+    color: #444;
+    margin-bottom: 10px;
+}
+
+/* Center the empty cart message */
+.empty-cart-message {
+    text-align: center;
+    font-size: 1.5rem;
+    color: #5a9f1f; /* Changed to green instead of red */
+    background-color: #f9f9f9; /* Background to emphasize the message */
+    padding: 20px;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+
+/* Center the "Zamów" button */
+.order-button-container {
+    text-align: center;
+    margin-top: 30px;
+}
+
+/* Responsive design for smaller screens */
 @media (max-width: 768px) {
-    .cart-title {
-        font-size: 5vw;
+    .responsive-table th, .responsive-table td {
+        font-size: 0.9rem; /* Ensure readable text size on smaller screens */
+        padding: 8px 12px;
     }
 
-    .responsive-table th, .responsive-table td {
-        font-size: 0.85rem;
+    .responsive-table {
+        width: 100%;
+        margin: 0 10px;
+    }
+
+    .quantity-btn, .remove-btn, .order-btn {
+        font-size: 1rem;
         padding: 8px;
     }
 
-    .add-to-cart-btn {
-        font-size: 0.8rem;
-        padding: 8px 10px;
+    .cart-title {
+        font-size: 5vw; /* Slightly bigger font on small screens */
+    }
+
+    .cart-total {
+        font-size: 1.1rem;
+    }
+
+    .table-container {
+        height: auto;
+        max-height: 350px;
+    }
+
+    /* Confirmation text resizing for mobile */
+    .confirmation-title {
+        font-size: 1.5rem;
+    }
+
+    .confirmation-text {
+        font-size: 1rem;
+    }
+
+    /* Empty cart message font adjustment on small screens */
+    .empty-cart-message {
+        font-size: 1.2rem;
+    }
+
+    .order-btn {
+        font-size: 1rem;
+        padding: 10px 25px;
     }
 }

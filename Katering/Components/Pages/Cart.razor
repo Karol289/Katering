@@ -1,74 +1,96 @@
 ﻿@page "/cart"
 @using Katering.Services
 @using Katering.Data.Food
+@using Katering.Data.Orders
 @using Microsoft.EntityFrameworkCore
 @using Katering.Entities
+@using Katering.Data.SessionState
+@inject SessionState SessionState
 @inject IDbContextFactory<KateringDbContext> DbContextFactory
 @inject CartService CartService
 
 <h3 class="cart-title">Koszyk</h3>
 
-@if (!string.IsNullOrEmpty(ErrorMessage))
+@if (IsOrderPlaced)
 {
-    <p class="error-message">@ErrorMessage</p>
-}
-else if (IsLoading)
-{
-    <p>Ładowanie produktów...</p>
-}
-else if (CartService.CartItems.Count == 0)
-{
-    <p>Twój koszyk jest pusty.</p>
+    <div class="order-confirmation">
+        <h3 class="confirmation-title">Twoje zamówienie zostało złożone!</h3>
+        <p class="confirmation-text">Czekamy teraz na przelew na konto bankowe...</p>
+        <p class="confirmation-text">Oraz przesłanie potwierdzenia płatności na naszego maila...</p>
+        <p class="confirmation-text">Dziękujemy za zakupy! Możesz teraz zamówić kolejne produkty lub wrócić do strony głównej.</p>
+    </div>
 }
 else
 {
-    <div class="table-container">
-        <table class="responsive-table">
-            <thead>
-                <tr>
-                    <th>Nazwa</th>
-                    <th>Kategoria</th>
-                    <th>Kalorie</th>
-                    <th>Cena za sztukę</th>
-                    <th>Opis</th>
-                    <th>Ilość</th>
-                    <th>Łączna cena</th>
-                    <th>Opcje</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var (meal, quantity) in mealsWithQuantities)
-                {
+    if (!string.IsNullOrEmpty(ErrorMessage))
+    {
+        <p class="error-message">@ErrorMessage</p>
+    }
+    else if (IsLoading)
+    {
+        <p>Ładowanie produktów...</p>
+    }
+    else if (CartService.CartItems.Count == 0)
+    {
+        <p class="empty-cart-message">Twój koszyk jest pusty.</p>
+    }
+    else
+    {
+        <div class="table-container">
+            <table class="responsive-table">
+                <thead>
                     <tr>
-                        <td>@meal.Name</td>
-                        <td>@meal.MealCategory?.Name</td>
-                        <td>@meal.Calories</td>
-                        <td>@meal.Price.ToString()</td>
-                        <td>@meal.Description</td>
-                        <td>@quantity</td>
-                        <td>@(meal.Price * quantity)</td>
-                        <td>
-                            <button @onclick="() => IncrementMeal(meal.MealId)" class="quantity-btn">+</button>
-                            <button @onclick="() => DecrementMeal(meal.MealId)" class="quantity-btn">-</button>
-                            <button @onclick="() => RemoveFromCart(meal.MealId)" class="remove-btn">Usuń z koszyka</button>
-                        </td>
+                        <th>Nazwa</th>
+                        <th>Kategoria</th>
+                        <th>Kalorie</th>
+                        <th>Cena za sztukę</th>
+                        <th>Opis</th>
+                        <th>Ilość</th>
+                        <th>Łączna cena</th>
+                        <th>Opcje</th>
                     </tr>
-                }
-            </tbody>
-        </table>
-        <div class="cart-total">
-            <p>Łączna cena: <strong>@CalculateTotalPrice().ToString("C")</strong></p>
+                </thead>
+                <tbody>
+                    @foreach (var (meal, quantity) in mealsWithQuantities)
+                    {
+                        <tr>
+                            <td>@meal.Name</td>
+                            <td>@meal.MealCategory?.Name</td>
+                            <td>@meal.Calories</td>
+                            <td>@meal.Price.ToString()</td>
+                            <td>@meal.Description</td>
+                            <td>@quantity</td>
+                            <td>@(meal.Price * quantity)</td>
+                            <td>
+                                <button @onclick="() => IncrementMeal(meal.MealId)" class="quantity-btn">+</button>
+                                <button @onclick="() => DecrementMeal(meal.MealId)" class="quantity-btn">-</button>
+                                <button @onclick="() => RemoveFromCart(meal.MealId)" class="remove-btn">Usuń z koszyka</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            
         </div>
-    </div>
-    <div>
-        <td><button @onclick="() => OrderMeal()" class="order-btn">Zamów</button></td>
-    </div>
+        <div class="cart-summary">
+            <div class="cart-total">
+                <p>Łączna cena: <strong>@CalculateTotalPrice().ToString("C")</strong></p>
+            </div>
+            <div class="order-btn-container">
+                <button @onclick="() => OrderMeal()" class="order-btn">Zamów</button>
+            </div>
+        </div>
+    }
 }
 
 @code {
     public List<(Meal Meal, int Quantity)> mealsWithQuantities { get; private set; } = new();
+    public List<Order> Orders { get; private set; } = new List<Order>();
+    public Order order { get; private set; } = new Order();
+    public MealOrder mealOrder { get; private set; } = new MealOrder();
     public bool IsLoading { get; private set; } = true;
     public string ErrorMessage { get; private set; }
+    public bool IsOrderPlaced { get; private set; } = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -97,6 +119,11 @@ else
             mealsWithQuantities = mealsInCart
                 .Select(meal => (meal, CartService.CartItems[meal.MealId]))
                 .ToList();
+
+            Orders = await dbContext.Orders
+            .Include(m => m.Payment)
+            .Include(m => m.User)
+            .ToListAsync();
         }
         catch (Exception ex)
         {
@@ -147,8 +174,41 @@ else
         return mealsWithQuantities.Sum(m => (decimal)(m.Meal.Price ?? 0.0) * m.Quantity);
     }
 
-    private void OrderMeal()
+    private async Task OrderMeal()
     {
-        
+        order.Status = Order.OrderStatus.PENDING;
+        order.Date = DateTime.Now;
+        order.UserId = SessionState.User.UserId;
+
+        using var dbContext = DbContextFactory.CreateDbContext();
+
+        dbContext.Orders.Add(order);
+        await dbContext.SaveChangesAsync();  // Ensure order is saved to generate OrderID
+
+        mealOrder.OrderId = order.OrderID;  // Set the OrderId for meal orders
+        List<MealOrder> mealOrdersToAdd = new List<MealOrder>();
+
+        foreach (var meal in mealsWithQuantities)
+        {
+            for (int i = 0; i < meal.Quantity; i++)
+            {
+                var newMealOrder = new MealOrder
+                    {
+                        OrderId = mealOrder.OrderId,
+                        MealId = meal.Meal.MealId
+                    };
+                mealOrdersToAdd.Add(newMealOrder);
+            }
+        }
+
+        if (mealOrdersToAdd.Any())
+        {
+            dbContext.MealsOrder.AddRange(mealOrdersToAdd);  // Add all meal orders in a batch
+            await dbContext.SaveChangesAsync();  // Save them all at once
+        }
+
+        // Mark the order as placed and clear the cart
+        IsOrderPlaced = true;
+        CartService.ClearCart();  // Clear the cart once the order is placed
     }
 }

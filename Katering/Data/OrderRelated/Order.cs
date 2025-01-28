@@ -12,6 +12,8 @@ namespace Katering.Data.Orders
         [Key]
         public int OrderID { get; set; }
 
+        public int? UserId { get; set; }
+
 
         [ForeignKey("PaymentId")]
         public Payment? Payment { get; set; }

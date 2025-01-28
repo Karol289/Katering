@@ -118,20 +118,6 @@
 
         try
         {
-            var meal = meals.FirstOrDefault(m => m.MealId == newMeal.MealId);
-            if (meal == null)
-            {
-                Message = "Invalid meal.";
-                return;
-            }
-
-            var user = users.FirstOrDefault(u => u.Id == SessionState.User.UserId);
-            if (user == null)
-            {
-                Message = "Invalid user.";
-                return;
-            }
-
             newRating.RatingId = ratings.Any() ? ratings.Last().RatingId + 1 : 1;
             newRating.MealId = newMeal.MealId;
             newRating.UserId = SessionState.User.UserId;

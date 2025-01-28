@@ -12,7 +12,9 @@ namespace Katering.Data.Orders
     {
         [Key]
         public int MealOrderId { get; set; }
-
+        
+        public int? MealId { get; set; }
+        public int? OrderId { get; set; }
 
         [ForeignKey("MealId")]
         public Meal? Payment { get; set; }
