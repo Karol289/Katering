@@ -162,8 +162,8 @@ else
                     Calories = mealCalories.Value,
                     Price = mealPrice.Value,
                     Description = mealDescription,
-                    Diet = diets.FirstOrDefault(d => d.DietId == selectedDietId),
-                    MealCategory = mealCategories.FirstOrDefault(mc => mc.MealCategoryId == selectedCategoryId)
+                    DietId = selectedDietId,
+                    MealCategoryId = selectedCategoryId
                 };
 
             if (isEditing && editingMealId.HasValue)

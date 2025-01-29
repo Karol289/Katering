@@ -11,10 +11,11 @@ namespace Katering.Data.Food
         [Key]
         public int MealId { get; set; }
 
-
+        public int? DietId { get; set; } // Klucz obcy (zeby mozna bylop przypisywac)
         [ForeignKey("DietId")]
         public Diet? Diet { get; set; }
 
+        public int? MealCategoryId { get; set; } // Klucz obcy
         [ForeignKey("MealCategoryId")]
         public MealCategory? MealCategory { get; set; }
 
