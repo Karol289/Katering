@@ -1,4 +1,4 @@
-#Katering
+# Katering
 Projekt Grupowy
 Aplikacja kateringowa umożliwiająca składanie zamówień oraz raportowanie.
 
